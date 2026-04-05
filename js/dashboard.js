@@ -109,12 +109,12 @@
       const statusLow = Number(prod.quantity) < 5;
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td><span style="font-weight: 600;">${prod.name}</span></td>
-        <td><span class="badge" style="background: rgba(148, 163, 184, 0.1);">${prod.category}</span></td>
-        <td>${currencyFormatter(prod.price)}</td>
-        <td>${prod.quantity}</td>
-        <td><span class="badge ${statusLow ? 'badge-danger' : 'badge-success'}">${statusLow ? 'Low Stock' : 'In Stock'}</span></td>
-        <td style="text-align: right;">
+        <td data-label="Product Name"><span style="font-weight: 600;">${prod.name}</span></td>
+        <td data-label="Category"><span class="badge" style="background: rgba(148, 163, 184, 0.1);">${prod.category}</span></td>
+        <td data-label="Price">${currencyFormatter(prod.price)}</td>
+        <td data-label="Quantity">${prod.quantity}</td>
+        <td data-label="Status"><span class="badge ${statusLow ? 'badge-danger' : 'badge-success'}">${statusLow ? 'Low Stock' : 'In Stock'}</span></td>
+        <td class="actions-cell">
           <button class="btn btn-ghost" style="padding: 0.4rem;" data-id="${prod.id}" data-action="edit" title="Edit"><i class="fas fa-edit"></i></button>
           <button class="btn btn-ghost" style="padding: 0.4rem; color: var(--danger);" data-id="${prod.id}" data-action="delete" title="Delete"><i class="fas fa-trash"></i></button>
         </td>

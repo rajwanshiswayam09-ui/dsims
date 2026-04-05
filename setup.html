@@ -21,7 +21,7 @@
         <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
           <i class="fas fa-store" style="color: var(--accent);"></i> Business Information
         </h3>
-        <form id="shopForm" class="grid two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <form id="shopForm" class="grid grid-2">
           <div class="form-group">
             <label class="form-label">Shop Name</label>
             <input type="text" id="shopName" class="form-control" placeholder="Bright Mart" required>
@@ -51,7 +51,7 @@
           </button>
         </div>
 
-        <form id="productForm" class="grid four" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; background: var(--bg-input); padding: 1.5rem; border-radius: var(--radius-md);">
+        <form id="productForm" class="grid setup-product-grid" style="margin-bottom: 1.5rem; background: var(--bg-input); padding: 1.5rem; border-radius: var(--radius-md);">
           <input type="text" id="productName" class="form-control" placeholder="Product Name">
           <input type="number" id="productPrice" class="form-control" placeholder="Price" min="0" step="0.01">
           <input type="number" id="productQty" class="form-control" placeholder="Qty" min="0">

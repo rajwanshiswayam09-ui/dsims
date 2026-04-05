@@ -42,6 +42,7 @@
     <div class="main-wrapper">
       <header class="topbar no-print">
         <div class="topbar-content">
+          <button class="menu-toggle"><i class="fas fa-bars"></i></button>
           <h2 style="margin: 0; font-size: 1.25rem;">Create Invoice</h2>
         </div>
         <div class="topbar-content">
@@ -57,18 +58,18 @@
 
       <main class="main-content">
         <div class="invoice-card animate-slide-up" id="invoicePreview">
-          <div class="invoice-head">
+          <div class="invoice-head flex justify-between items-start mobile-flex-col gap-4">
             <div>
               <img src="assets/icons/custom-logo.png" alt="Logo" class="invoice-logo">
               <h1 id="invoiceNumber" style="font-size: 2rem; margin: 0;">#INV-0001</h1>
               <p id="invoiceDate" style="font-size: 1rem;">Date</p>
             </div>
-            <div class="align-right" id="shopDetailsDisplay">
+            <div class="align-right mobile-text-left" id="shopDetailsDisplay">
               <!-- Shop Details injected here -->
             </div>
           </div>
 
-          <div class="grid two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+          <div class="grid grid-2" style="margin-bottom: 2rem;">
             <div class="form-group">
               <label class="form-label" for="customerName">Customer Name</label>
               <input type="text" id="customerName" class="form-control" placeholder="Enter customer name" required>
@@ -94,7 +95,7 @@
             </table>
           </div>
 
-          <div class="totals-grid">
+          <div class="grid grid-3" style="margin-bottom: 2rem;">
             <div class="card">
               <p style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.5rem;">Subtotal</p>
               <h3 id="subtotal" style="margin: 0;">$0.00</h3>
@@ -109,17 +110,17 @@
             </div>
           </div>
 
-          <div class="flex justify-between items-center no-print" style="margin-top: 3rem;">
-            <div class="flex gap-2">
-              <button class="btn btn-secondary" id="saveInvoice">
+          <div class="flex justify-between items-center no-print mobile-flex-col gap-4" style="margin-top: 3rem;">
+            <div class="flex gap-2 mobile-w-full">
+              <button class="btn btn-secondary mobile-w-full" id="saveInvoice">
                 <i class="fas fa-save"></i> Save Draft
               </button>
             </div>
-            <div class="flex gap-2">
-              <button class="btn btn-secondary" id="topPrint">
+            <div class="flex gap-2 mobile-flex-col mobile-w-full">
+              <button class="btn btn-secondary mobile-w-full" id="topPrint">
                 <i class="fas fa-print"></i> Print PDF
               </button>
-              <button class="btn btn-primary" id="downloadInvoice">
+              <button class="btn btn-primary mobile-w-full" id="downloadInvoice">
                 <i class="fas fa-check-circle"></i> Finalize & Print
               </button>
             </div>

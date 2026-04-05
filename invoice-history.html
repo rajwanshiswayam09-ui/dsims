@@ -32,32 +32,38 @@
     <div class="main-wrapper">
       <header class="topbar">
         <div class="topbar-content">
+          <button class="menu-toggle"><i class="fas fa-bars"></i></button>
           <h2 style="margin: 0; font-size: 1.25rem;">Invoice History</h2>
         </div>
         <div class="topbar-content">
-          <div class="flex items-center gap-2">
-            <div id="topbarAvatar" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--bg-input); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
-              <i class="fas fa-user-circle" id="topbarIcon" style="font-size: 1.25rem; color: var(--text-muted);"></i>
-              <img id="topbarImg" src="" alt="P" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+          <div class="flex items-center gap-4">
+            <button id="themeToggle" class="btn-ghost" style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+              <i class="fas fa-moon"></i>
+            </button>
+            <div class="flex items-center gap-2">
+              <div id="topbarAvatar" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--bg-input); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
+                <i class="fas fa-user-circle" id="topbarIcon" style="font-size: 1.25rem; color: var(--text-muted);"></i>
+                <img id="topbarImg" src="" alt="P" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+              </div>
+              <span id="userNameDisplay">Admin</span>
             </div>
-            <span id="userNameDisplay">Admin</span>
           </div>
         </div>
       </header>
 
       <main class="main-content">
         <div class="card animate-slide-up">
-          <div class="flex items-center justify-between" style="margin-bottom: 2rem;">
+          <div class="flex items-center justify-between mobile-flex-col gap-4" style="margin-bottom: 2rem;">
             <div>
               <h2 style="margin: 0;">Invoices</h2>
               <p style="margin: 0;">View and manage your generated invoices.</p>
             </div>
-            <div class="flex gap-2">
-              <div style="position: relative;">
+            <div class="flex gap-2 mobile-flex-col mobile-w-full">
+              <div style="position: relative;" class="mobile-w-full">
                 <i class="fas fa-search" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
-                <input type="text" id="invoiceSearch" class="form-control" style="padding-left: 2.75rem; width: 300px;" placeholder="Search customer or #INV...">
+                <input type="text" id="invoiceSearch" class="form-control mobile-w-full" style="padding-left: 2.75rem; width: 300px;" placeholder="Search customer or #INV...">
               </div>
-              <button class="btn btn-primary" onclick="location.href='invoice.html'">
+              <button class="btn btn-primary mobile-w-full" onclick="location.href='invoice.html'">
                 <i class="fas fa-plus"></i> New Invoice
               </button>
             </div>

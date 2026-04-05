@@ -1,5 +1,12 @@
-.content h2 {
-  margin-bottom: 4px;
+.dashboard-main-grid {
+  grid-template-columns: 2fr 1fr;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .dashboard-main-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .status {

@@ -37,9 +37,10 @@
     <div class="main-wrapper">
       <header class="topbar">
         <div class="topbar-content">
+          <button class="menu-toggle"><i class="fas fa-bars"></i></button>
           <h2 style="margin: 0; font-size: 1.25rem;">Analytics & Reports</h2>
         </div>
-        <div class="topbar-content">
+        <div class="topbar-content mobile-flex-col gap-2">
           <div class="flex items-center gap-2" style="margin-right: 1rem;">
             <div id="topbarAvatar" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--bg-input); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
               <i class="fas fa-user-circle" id="topbarIcon" style="font-size: 1.25rem; color: var(--text-muted);"></i>
@@ -47,9 +48,9 @@
             </div>
             <span id="userNameDisplay">Admin</span>
           </div>
-          <div class="flex gap-2">
-            <button class="btn btn-secondary" id="exportExcel"><i class="fas fa-file-excel"></i> Excel</button>
-            <button class="btn btn-primary" id="exportPdf"><i class="fas fa-file-pdf"></i> PDF Report</button>
+          <div class="flex gap-2 mobile-w-full">
+            <button class="btn btn-secondary mobile-w-full" id="exportExcel"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="btn btn-primary mobile-w-full" id="exportPdf"><i class="fas fa-file-pdf"></i> PDF Report</button>
           </div>
         </div>
       </header>

@@ -50,16 +50,14 @@
     list.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(inv => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td><span style="font-weight: 600; color: var(--accent);">#${inv.invoiceNumber}</span></td>
-        <td>${inv.customerName}</td>
-        <td>${new Date(inv.date).toLocaleDateString()}</td>
-        <td>${currencyFormatter(inv.grandTotal)}</td>
-        <td><span class="badge badge-success">Completed</span></td>
-        <td style="text-align: right;">
-          <div class="flex justify-end gap-2">
-            <button class="btn btn-ghost" style="padding: 0.4rem;" onclick="viewInvoice('${inv.id}')" title="View"><i class="fas fa-eye"></i></button>
-            <button class="btn btn-ghost" style="padding: 0.4rem; color: var(--danger);" onclick="deleteInvoice('${inv.id}')" title="Delete"><i class="fas fa-trash"></i></button>
-          </div>
+        <td data-label="Invoice #"><strong>#${inv.invoiceNumber}</strong></td>
+        <td data-label="Customer">${inv.customerName}</td>
+        <td data-label="Date">${new Date(inv.date).toLocaleDateString()}</td>
+        <td data-label="Total">${currencyFormatter(inv.grandTotal)}</td>
+        <td data-label="Status"><span class="badge badge-success">Completed</span></td>
+        <td class="actions-cell">
+          <button class="btn btn-ghost" onclick="viewInvoice('${inv.id}')" title="View"><i class="fas fa-eye"></i></button>
+          <button class="btn btn-ghost" style="color: var(--danger);" onclick="deleteInvoice('${inv.id}')" title="Delete"><i class="fas fa-trash"></i></button>
         </td>
       `;
       tableBody.appendChild(row);

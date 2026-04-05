@@ -9,6 +9,7 @@
   <style>
     body { display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent), radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.05), transparent), var(--bg-main); }
     .auth-card { width: 100%; max-width: 420px; padding: 2.5rem; background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
+    @media (max-width: 480px) { .auth-card { padding: 1.5rem; border-radius: var(--radius-lg); } }
     .auth-header { text-align: center; margin-bottom: 2rem; }
     .auth-logo { width: 64px; height: 64px; margin-bottom: 1rem; }
     .auth-tabs { display: flex; background: var(--bg-input); padding: 0.25rem; border-radius: var(--radius-md); margin-bottom: 2rem; }

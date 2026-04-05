@@ -27,12 +27,87 @@
     applyTheme(newTheme);
   }
 
+  function initBottomNav() {
+    if (window.innerWidth > 768) return;
+    
+    const existing = document.querySelector('.bottom-nav');
+    if (existing) return;
+
+    const nav = document.createElement('div');
+    nav.className = 'bottom-nav';
+    
+    const items = [
+      { href: 'dashboard.html', icon: 'fas fa-th-large', label: 'Home' },
+      { href: 'invoice.html', icon: 'fas fa-plus-circle', label: 'New Sale' },
+      { href: 'analytics.html', icon: 'fas fa-chart-pie', label: 'Stats' },
+      { href: 'shop-details.html', icon: 'fas fa-user-cog', label: 'Profile' }
+    ];
+
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+
+    nav.innerHTML = items.map(item => `
+      <a href="${item.href}" class="bottom-nav-item ${currentPath === item.href ? 'active' : ''}">
+        <i class="${item.icon}"></i>
+        <span>${item.label}</span>
+      </a>
+    `).join('');
+
+    document.body.appendChild(nav);
+  }
+
+  // Sidebar Toggle logic for mobile
+  function initSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.querySelector('.menu-toggle');
+    if (!sidebar) return;
+
+    // Create backdrop if it doesn't exist
+    let backdrop = document.querySelector('.sidebar-backdrop');
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.className = 'sidebar-backdrop';
+      document.body.appendChild(backdrop);
+    }
+
+    const toggle = () => {
+      sidebar.classList.toggle('active');
+      backdrop.classList.toggle('active');
+      document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+    };
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', toggle);
+    }
+
+    backdrop.addEventListener('click', toggle);
+
+    // Close sidebar on navigation (for mobile)
+    const navItems = sidebar.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        if (window.innerWidth <= 1024) {
+          sidebar.classList.remove('active');
+          backdrop.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+  }
+
   // Initialize on DOM ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTheme);
-  } else {
-    initTheme();
-  }
+      document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        initSidebar();
+        initBottomNav();
+        initThemeToggle();
+      });
+    } else {
+      initTheme();
+      initSidebar();
+      initBottomNav();
+      initThemeToggle();
+    }
 
   // Export for global use
   window.ThemeAPI = {
@@ -40,6 +115,22 @@
     set: applyTheme,
     get: getTheme
   };
+
+  function initThemeToggle() {
+    const btn = document.getElementById('themeToggle');
+    if (!btn) return;
+    
+    const updateIcon = () => {
+      const isDark = getTheme() === THEMES.dark;
+      btn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+    };
+
+    btn.addEventListener('click', () => {
+      toggleTheme();
+      updateIcon();
+    });
+    updateIcon();
+  }
 
   // Helper to update topbar profile info
   window.updateTopbarProfile = (user) => {
@@ -57,6 +148,15 @@
     } else if (avatarImg && avatarIcon) {
       avatarImg.style.display = 'none';
       avatarIcon.style.display = 'block';
+    }
+
+    // Hide user name on mobile topbar
+    if (nameEl) {
+      if (window.innerWidth <= 480) {
+        nameEl.style.display = 'none';
+      } else {
+        nameEl.style.display = 'block';
+      }
     }
   };
 

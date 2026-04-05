@@ -58,11 +58,11 @@
     products.forEach(prod => {
       const row = document.createElement('tr');
       row.innerHTML = `
-        <td class="no-print"><input type="checkbox" data-id="${prod.id}" checked style="width: 18px; height: 18px; cursor: pointer;"></td>
-        <td><span style="font-weight: 600;">${prod.name}</span></td>
-        <td>${formatCurrency.format(Number(prod.price) || 0)}</td>
-        <td><input type="number" min="1" value="1" data-qty="${prod.id}" class="form-control qty-input" style="padding: 0.4rem;"></td>
-        <td class="line-total" data-total="${prod.id}" style="text-align: right; font-weight: 600;">0</td>
+        <td class="no-print" data-label="Select"><input type="checkbox" data-id="${prod.id}" checked style="width: 18px; height: 18px; cursor: pointer;"></td>
+        <td data-label="Product"><span style="font-weight: 600;">${prod.name}</span></td>
+        <td data-label="Price">${formatCurrency.format(Number(prod.price) || 0)}</td>
+        <td data-label="Qty"><input type="number" min="1" value="1" data-qty="${prod.id}" class="form-control qty-input" style="padding: 0.4rem;"></td>
+        <td data-label="Total" class="line-total" data-total="${prod.id}" style="text-align: right; font-weight: 600;">0</td>
       `;
       invoiceProductsBody.appendChild(row);
     });

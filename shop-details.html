@@ -32,7 +32,8 @@
     <div class="main-wrapper">
       <header class="topbar">
         <div class="topbar-content">
-          <h2 style="margin: 0; font-size: 1.25rem;">Shop Settings</h2>
+          <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+          <h2 style="margin: 0; font-size: 1.25rem;">Business Profile</h2>
         </div>
         <div class="topbar-content">
           <div class="flex items-center gap-2">
@@ -46,7 +47,7 @@
       </header>
 
       <main class="main-content">
-        <div class="grid two" style="display: grid; grid-template-columns: 300px 1fr; gap: 2rem; max-width: 1100px; margin: 0 auto;">
+        <div class="grid shop-details-grid" style="max-width: 1100px; margin: 0 auto;">
           <!-- Profile Picture Section -->
           <div class="card animate-slide-up" style="text-align: center; height: fit-content;">
             <h3 style="margin-bottom: 1.5rem;">User Profile</h3>
@@ -67,7 +68,7 @@
               <label class="form-label">Update Name</label>
               <input type="text" id="updateUserName" class="form-control" placeholder="Your Name">
             </div>
-            <button class="btn btn-primary" id="saveUserProfile" style="width: 100%;">Update Profile</button>
+            <button class="btn btn-primary mobile-w-full" id="saveUserProfile" style="width: 100%;">Update Profile</button>
           </div>
 
           <!-- Shop Settings Section -->
@@ -78,7 +79,7 @@
             </div>
 
             <form id="shopForm">
-              <div class="grid two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+              <div class="grid grid-2" style="margin-bottom: 1.5rem;">
                 <div class="form-group">
                   <label class="form-label" for="shopName">Shop Name</label>
                   <input type="text" id="shopName" class="form-control" placeholder="Bright Mart" required>
@@ -97,8 +98,8 @@
                 </div>
               </div>
 
-              <div class="flex justify-end" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
-                <button type="button" class="btn btn-primary" id="saveShop">
+              <div class="flex justify-end mobile-flex-col" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                <button type="button" class="btn btn-primary mobile-w-full" id="saveShop">
                   <i class="fas fa-save"></i> Save Changes
                 </button>
               </div>
