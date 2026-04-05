@@ -1,0 +1,47 @@
+.invoice-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.totals {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+
+.totals h2, .totals h3 {
+  margin-top: 4px;
+}
+
+@media print {
+  body {
+    background: white;
+  }
+  .sidebar, .topbar, .btn, .actions, .page-title, .page-subtitle {
+    display: none !important;
+  }
+  .main-content {
+    padding: 0;
+  }
+  .panel {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+  /* Hide unchecked rows – only selected items appear in print */
+  tr.invoice-print-hide {
+    display: none !important;
+  }
+  /* Hide the Select column in print */
+  th:first-child,
+  td:first-child {
+    display: none !important;
+  }
+}
+

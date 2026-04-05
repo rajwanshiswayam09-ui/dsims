@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics | DSIMS</title>
+  <link rel="stylesheet" href="css/app-shell.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 1.5rem; }
+    .chart-container { background: var(--bg-card); border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--border); box-shadow: var(--shadow-md); }
+    canvas { width: 100% !important; height: 300px !important; }
+  </style>
+  <script src="js/theme.js"></script>
+</head>
+<body class="animate-fade">
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img src="assets/icons/custom-logo.png" alt="DSIMS" class="sidebar-logo">
+        <span class="sidebar-title">DSIMS</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-boxes"></i> <span>Dashboard</span></a>
+        <a href="shop-details.html" class="nav-item"><i class="fas fa-store"></i> <span>Shop Details</span></a>
+        <a href="analytics.html" class="nav-item active"><i class="fas fa-chart-line"></i> <span>Analytics</span></a>
+        <a href="invoice.html" class="nav-item"><i class="fas fa-file-invoice"></i> <span>Invoices</span></a>
+        <a href="invoice-history.html" class="nav-item"><i class="fas fa-history"></i> <span>Invoice History</span></a>
+      </nav>
+      <div class="sidebar-footer" style="padding: 1rem; border-top: 1px solid var(--border);">
+        <button class="nav-item btn-ghost w-full" style="width: 100%; justify-content: flex-start;" onclick="StorageAPI.clearCurrentUser(); location.href='auth.html';">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-content">
+          <h2 style="margin: 0; font-size: 1.25rem;">Analytics & Reports</h2>
+        </div>
+        <div class="topbar-content">
+          <div class="flex items-center gap-2" style="margin-right: 1rem;">
+            <div id="topbarAvatar" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--bg-input); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
+              <i class="fas fa-user-circle" id="topbarIcon" style="font-size: 1.25rem; color: var(--text-muted);"></i>
+              <img id="topbarImg" src="" alt="P" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+            </div>
+            <span id="userNameDisplay">Admin</span>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn btn-secondary" id="exportExcel"><i class="fas fa-file-excel"></i> Excel</button>
+            <button class="btn btn-primary" id="exportPdf"><i class="fas fa-file-pdf"></i> PDF Report</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="animate-slide-up">
+          <div class="chart-grid">
+            <div class="chart-container">
+              <h4 style="margin-bottom: 1rem;"><i class="fas fa-chart-bar" style="color: var(--accent);"></i> Monthly Stock Usage</h4>
+              <canvas id="usageChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h4 style="margin-bottom: 1rem;"><i class="fas fa-trophy" style="color: var(--warning);"></i> Top Sold Items</h4>
+              <canvas id="topItemsChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h4 style="margin-bottom: 1rem;"><i class="fas fa-chart-pie" style="color: var(--accent);"></i> Sales Distribution</h4>
+              <canvas id="pieChart"></canvas>
+            </div>
+            <div class="chart-container">
+              <h4 style="margin-bottom: 1rem;"><i class="fas fa-heartbeat" style="color: var(--success);"></i> Monthly Revenue</h4>
+              <canvas id="shopHealthChart"></canvas>
+            </div>
+            <div class="chart-container" style="grid-column: 1 / -1;">
+              <h4 style="margin-bottom: 1rem;"><i class="fas fa-trending-up" style="color: var(--accent);"></i> Inventory Value Trend</h4>
+              <canvas id="valueTrendChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-storage.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/analytics.js"></script>
+</body>
+</html>

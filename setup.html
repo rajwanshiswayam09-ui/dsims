@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Setup | DSIMS</title>
+  <link rel="stylesheet" href="css/app-shell.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <script src="js/theme.js"></script>
+</head>
+<body class="animate-fade">
+  <div class="app-container" style="justify-content: center; align-items: center; padding: 2rem;">
+    <main class="card animate-slide-up" style="width: 100%; max-width: 900px;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <img src="assets/icons/custom-logo.png" alt="DSIMS" style="width: 64px; height: 64px; margin-bottom: 1rem;">
+        <h1 style="margin: 0;">Shop Setup</h1>
+        <p style="margin: 0;">Configure your business profile to get started.</p>
+      </div>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h3 style="margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+          <i class="fas fa-store" style="color: var(--accent);"></i> Business Information
+        </h3>
+        <form id="shopForm" class="grid two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label">Shop Name</label>
+            <input type="text" id="shopName" class="form-control" placeholder="Bright Mart" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Owner Name</label>
+            <input type="text" id="ownerName" class="form-control" placeholder="Ravi Kumar" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Shop Category</label>
+            <input type="text" id="category" class="form-control" placeholder="Groceries / Fashion" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Currency Symbol</label>
+            <input type="text" id="currency" class="form-control" placeholder="USD / INR / EUR" required>
+          </div>
+        </form>
+      </section>
+
+      <section>
+        <div class="flex justify-between items-center" style="margin-bottom: 1.5rem;">
+          <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fas fa-boxes" style="color: var(--accent);"></i> Initial Inventory
+          </h3>
+          <button class="btn btn-secondary" id="addProductBtn">
+            <i class="fas fa-plus"></i> Add Product
+          </button>
+        </div>
+
+        <form id="productForm" class="grid four" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; background: var(--bg-input); padding: 1.5rem; border-radius: var(--radius-md);">
+          <input type="text" id="productName" class="form-control" placeholder="Product Name">
+          <input type="number" id="productPrice" class="form-control" placeholder="Price" min="0" step="0.01">
+          <input type="number" id="productQty" class="form-control" placeholder="Qty" min="0">
+          <input type="text" id="productCategory" class="form-control" placeholder="Category">
+        </form>
+
+        <div class="table-container" style="margin-bottom: 2rem; max-height: 300px; overflow-y: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Price</th>
+                <th>Qty</th>
+              </tr>
+            </thead>
+            <tbody id="productTable"></tbody>
+          </table>
+        </div>
+
+        <div class="flex justify-end gap-2" style="border-top: 1px solid var(--border); padding-top: 2rem;">
+          <button class="btn btn-ghost" onclick="location.href='dashboard.html'">Skip Setup</button>
+          <button class="btn btn-primary" id="finishSetup" style="padding-left: 2rem; padding-right: 2rem;">
+            Complete Setup <i class="fas fa-check-circle"></i>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-storage.js"></script>
+  <script>
+    // Toast Logic
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      const icon = type === 'success' ? 'check-circle' : (type === 'error' ? 'exclamation-circle' : 'info-circle');
+      toast.innerHTML = `<i class="fas fa-${icon}"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.add('active'), 10);
+      setTimeout(() => {
+        toast.classList.remove('active');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+  </script>
+  <script src="js/setup.js"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Details | DSIMS</title>
+  <link rel="stylesheet" href="css/app-shell.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <script src="js/theme.js"></script>
+</head>
+<body class="animate-fade">
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <img src="assets/icons/custom-logo.png" alt="DSIMS" class="sidebar-logo">
+        <span class="sidebar-title">DSIMS</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-boxes"></i> <span>Dashboard</span></a>
+        <a href="shop-details.html" class="nav-item active"><i class="fas fa-store"></i> <span>Shop Details</span></a>
+        <a href="analytics.html" class="nav-item"><i class="fas fa-chart-line"></i> <span>Analytics</span></a>
+        <a href="invoice.html" class="nav-item"><i class="fas fa-file-invoice"></i> <span>Invoices</span></a>
+        <a href="invoice-history.html" class="nav-item"><i class="fas fa-history"></i> <span>Invoice History</span></a>
+      </nav>
+      <div class="sidebar-footer" style="padding: 1rem; border-top: 1px solid var(--border);">
+        <button class="nav-item btn-ghost w-full" style="width: 100%; justify-content: flex-start;" onclick="StorageAPI.clearCurrentUser(); location.href='auth.html';">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="topbar">
+        <div class="topbar-content">
+          <h2 style="margin: 0; font-size: 1.25rem;">Shop Settings</h2>
+        </div>
+        <div class="topbar-content">
+          <div class="flex items-center gap-2">
+            <div id="topbarAvatar" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--bg-input); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
+              <i class="fas fa-user-circle" id="topbarIcon" style="font-size: 1.25rem; color: var(--text-muted);"></i>
+              <img id="topbarImg" src="" alt="P" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+            </div>
+            <span id="userNameDisplay">Admin</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="grid two" style="display: grid; grid-template-columns: 300px 1fr; gap: 2rem; max-width: 1100px; margin: 0 auto;">
+          <!-- Profile Picture Section -->
+          <div class="card animate-slide-up" style="text-align: center; height: fit-content;">
+            <h3 style="margin-bottom: 1.5rem;">User Profile</h3>
+            <div style="position: relative; width: 150px; height: 150px; margin: 0 auto 1.5rem; border-radius: 50%; overflow: hidden; border: 4px solid var(--border); background: var(--bg-input);">
+              <img id="profilePicDisplay" src="https://ui-avatars.com/api/?name=Admin&background=38bdf8&color=fff&size=150" alt="Profile" style="width: 100%; height: 100%; object-fit: cover;">
+              <label for="profilePicInput" style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: white; padding: 0.5rem; font-size: 0.75rem; cursor: pointer; transition: var(--transition); opacity: 0;">
+                <i class="fas fa-camera"></i> Change
+              </label>
+              <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
+            </div>
+            <style>
+              div:hover > label[for="profilePicInput"] { opacity: 1 !important; }
+            </style>
+            <h4 id="profileNameDisplay" style="margin: 0;">Admin User</h4>
+            <p id="profileEmailDisplay" style="font-size: 0.875rem; margin-bottom: 1.5rem;">admin@example.com</p>
+            
+            <div class="form-group" style="text-align: left;">
+              <label class="form-label">Update Name</label>
+              <input type="text" id="updateUserName" class="form-control" placeholder="Your Name">
+            </div>
+            <button class="btn btn-primary" id="saveUserProfile" style="width: 100%;">Update Profile</button>
+          </div>
+
+          <!-- Shop Settings Section -->
+          <div class="card animate-slide-up">
+            <div style="margin-bottom: 2rem;">
+              <h2 style="margin: 0;">Business Profile</h2>
+              <p style="margin: 0;">Configure your shop details for invoices and branding.</p>
+            </div>
+
+            <form id="shopForm">
+              <div class="grid two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div class="form-group">
+                  <label class="form-label" for="shopName">Shop Name</label>
+                  <input type="text" id="shopName" class="form-control" placeholder="Bright Mart" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="ownerName">Owner Name</label>
+                  <input type="text" id="ownerName" class="form-control" placeholder="Ravi Kumar" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="category">Shop Category</label>
+                  <input type="text" id="category" class="form-control" placeholder="Groceries / Fashion" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="currency">Currency</label>
+                  <input type="text" id="currency" class="form-control" placeholder="USD / INR / EUR" required>
+                </div>
+              </div>
+
+              <div class="flex justify-end" style="margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                <button type="button" class="btn btn-primary" id="saveShop">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-storage.js"></script>
+  <script src="js/shop-details.js"></script>
+</body>
+</html>

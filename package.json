@@ -1,0 +1,33 @@
+{
+  "name": "dsims-shopkeeper-inventory",
+  "version": "3.0.1",
+  "description": "Shopkeeper Inventory Management System - Firebase Powered",
+  "scripts": {
+    "start": "npx serve .",
+    "electron": "electron .",
+    "build-win": "electron-builder --win",
+    "build-mac": "electron-builder --mac",
+    "build-linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "serve": "^14.2.1"
+  },
+  "build": {
+    "appId": "com.dsims.shopkeeper",
+    "productName": "DSIMS",
+    "win": {
+      "target": "portable",
+      "icon": "assets/icons/custom-logo.png"
+    },
+    "files": [
+      "**/*",
+      "!dist/*",
+      "!node_modules/*"
+    ]
+  },
+  "dependencies": {
+    "firebase": "^12.11.0"
+  }
+}

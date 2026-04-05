@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoice | DSIMS</title>
+  <link rel="stylesheet" href="css/app-shell.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    .invoice-card { background: var(--bg-card); border-radius: var(--radius-xl); padding: 2.5rem; border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
+    .invoice-head { border-bottom: 2px solid var(--border); padding-bottom: 1.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-start; }
+    .invoice-logo { width: 60px; height: 60px; margin-bottom: 1rem; }
+    .totals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    @media print {
+      .main-wrapper { margin: 0 !important; }
+      .main-content { padding: 0 !important; }
+    }
+  </style>
+  <script src="js/theme.js"></script>
+</head>
+<body class="animate-fade">
+  <div class="app-container">
+    <aside class="sidebar no-print" id="sidebar">
+      <div class="sidebar-header">
+        <img src="assets/icons/custom-logo.png" alt="DSIMS" class="sidebar-logo">
+        <span class="sidebar-title">DSIMS</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-boxes"></i> <span>Dashboard</span></a>
+        <a href="shop-details.html" class="nav-item"><i class="fas fa-store"></i> <span>Shop Details</span></a>
+        <a href="analytics.html" class="nav-item"><i class="fas fa-chart-line"></i> <span>Analytics</span></a>
+        <a href="invoice.html" class="nav-item active"><i class="fas fa-file-invoice"></i> <span>Invoices</span></a>
+        <a href="invoice-history.html" class="nav-item"><i class="fas fa-history"></i> <span>Invoice History</span></a>
+      </nav>
+      <div class="sidebar-footer" style="padding: 1rem; border-top: 1px solid var(--border);">
+        <button class="nav-item btn-ghost w-full no-print" style="width: 100%; justify-content: flex-start;" onclick="StorageAPI.clearCurrentUser(); location.href='auth.html';">
+          <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="main-wrapper">
+      <header class="topbar no-print">
+        <div class="topbar-content">
+          <h2 style="margin: 0; font-size: 1.25rem;">Create Invoice</h2>
+        </div>
+        <div class="topbar-content">
+          <div class="flex items-center gap-2">
+            <div id="topbarAvatar" style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: var(--bg-input); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border);">
+              <i class="fas fa-user-circle" id="topbarIcon" style="font-size: 1.25rem; color: var(--text-muted);"></i>
+              <img id="topbarImg" src="" alt="P" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+            </div>
+            <span id="userNameDisplay">Admin</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="invoice-card animate-slide-up" id="invoicePreview">
+          <div class="invoice-head">
+            <div>
+              <img src="assets/icons/custom-logo.png" alt="Logo" class="invoice-logo">
+              <h1 id="invoiceNumber" style="font-size: 2rem; margin: 0;">#INV-0001</h1>
+              <p id="invoiceDate" style="font-size: 1rem;">Date</p>
+            </div>
+            <div class="align-right" id="shopDetailsDisplay">
+              <!-- Shop Details injected here -->
+            </div>
+          </div>
+
+          <div class="grid two" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            <div class="form-group">
+              <label class="form-label" for="customerName">Customer Name</label>
+              <input type="text" id="customerName" class="form-control" placeholder="Enter customer name" required>
+            </div>
+            <div class="form-group no-print">
+              <label class="form-label" for="invoiceDateInput">Invoice Date</label>
+              <input type="date" id="invoiceDateInput" class="form-control" required>
+            </div>
+          </div>
+
+          <div class="table-container" style="margin-bottom: 2rem;">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width: 50px;" class="no-print">Select</th>
+                  <th>Product</th>
+                  <th>Price</th>
+                  <th style="width: 100px;">Qty</th>
+                  <th style="text-align: right;">Total</th>
+                </tr>
+              </thead>
+              <tbody id="invoiceProducts"></tbody>
+            </table>
+          </div>
+
+          <div class="totals-grid">
+            <div class="card">
+              <p style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.5rem;">Subtotal</p>
+              <h3 id="subtotal" style="margin: 0;">$0.00</h3>
+            </div>
+            <div class="card">
+              <p style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.5rem;">Tax (5%)</p>
+              <h3 id="tax" style="margin: 0;">$0.00</h3>
+            </div>
+            <div class="card" style="background: var(--accent); color: var(--text-inverse);">
+              <p style="font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.5rem; color: var(--text-inverse); opacity: 0.8;">Grand Total</p>
+              <h2 id="grandTotal" style="margin: 0;">$0.00</h2>
+            </div>
+          </div>
+
+          <div class="flex justify-between items-center no-print" style="margin-top: 3rem;">
+            <div class="flex gap-2">
+              <button class="btn btn-secondary" id="saveInvoice">
+                <i class="fas fa-save"></i> Save Draft
+              </button>
+            </div>
+            <div class="flex gap-2">
+              <button class="btn btn-secondary" id="topPrint">
+                <i class="fas fa-print"></i> Print PDF
+              </button>
+              <button class="btn btn-primary" id="downloadInvoice">
+                <i class="fas fa-check-circle"></i> Finalize & Print
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-storage.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/invoice.js"></script>
+</body>
+</html>

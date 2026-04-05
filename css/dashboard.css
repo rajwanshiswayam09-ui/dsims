@@ -1,0 +1,54 @@
+.content h2 {
+  margin-bottom: 4px;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+}
+
+.status.low {
+  background: rgba(255, 99, 132, 0.12);
+  color: #ff6384;
+}
+
+[data-theme="light"] .status.low {
+  background: rgba(255, 99, 132, 0.2);
+  color: #dc2626;
+}
+
+.status.ok {
+  background: rgba(22, 163, 74, 0.14);
+  color: #16a34a;
+}
+
+[data-theme="light"] .status.ok {
+  background: rgba(22, 163, 74, 0.16);
+  color: #15803d;
+}
+
+.table-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.table-actions .btn {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.stat {
+  padding: 18px;
+}
+
+.stat p {
+  color: var(--muted);
+}
+
+.chart-card canvas {
+  width: 100%;
+}
+

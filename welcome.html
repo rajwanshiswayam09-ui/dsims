@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to DSIMS | Inventory Management</title>
+  <link rel="stylesheet" href="css/app-shell.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    :root {
+      --hero-gradient: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      --glass-bg: rgba(30, 41, 59, 0.4);
+      --glass-border: rgba(148, 163, 184, 0.1);
+      --glass-hover: rgba(30, 41, 59, 0.6);
+    }
+
+    body {
+      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.08), transparent 40%),
+                  radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.05), transparent 40%),
+                  var(--bg-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: var(--text-main);
+    }
+
+    .welcome-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 2rem;
+      text-align: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .hero-logo {
+      width: 90px;
+      height: 90px;
+      margin-bottom: 2.5rem;
+      filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.3));
+      animation: logoPulse 4s infinite ease-in-out;
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.3)); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 35px rgba(56, 189, 248, 0.5)); }
+    }
+
+    .hero-title {
+      font-size: 4rem;
+      font-weight: 800;
+      background: var(--hero-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 0.75rem;
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-tagline {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 1rem;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+    }
+
+    .hero-subtitle {
+      font-size: 1.125rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin-bottom: 3.5rem;
+      line-height: 1.6;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-bottom: 5rem;
+      width: 100%;
+      max-width: 320px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .btn-hero {
+      width: 100%;
+      padding: 1.25rem 2rem;
+      font-size: 1rem;
+      border-radius: var(--radius-lg);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .btn-hero.btn-primary {
+      background: var(--accent);
+      color: var(--text-inverse);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-hero.btn-primary:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.25);
+      background: var(--accent-hover);
+    }
+
+    .btn-hero.btn-secondary {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-hero.btn-secondary:hover {
+      background: var(--glass-hover);
+      transform: translateY(-4px);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2.5rem;
+      width: 100%;
+      margin-top: 4rem;
+    }
+
+    .feature-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      padding: 2.5rem 2rem;
+      border-radius: var(--radius-xl);
+      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    .feature-card:hover {
+      background: var(--glass-hover);
+      transform: translateY(-8px);
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .feature-icon {
+      font-size: 2.25rem;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: inline-block;
+      transition: var(--transition);
+    }
+
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1);
+    }
+
+    .feature-card h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .feature-card p {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 992px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title { font-size: 3rem; }
+      .welcome-container { padding: 3rem 1.5rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .feature-card { padding: 2.5rem 2rem; }
+    }
+
+    /* Background Elements */
+    .bg-blobs {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: var(--accent);
+      filter: blur(140px);
+      opacity: 0.07;
+      border-radius: 50%;
+      animation: blobFloat 20s infinite alternate ease-in-out;
+    }
+
+    .blob-1 { top: -200px; right: -100px; animation-delay: 0s; }
+    .blob-2 { bottom: -200px; left: -100px; animation-delay: -5s; }
+
+    @keyframes blobFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(100px, 50px) scale(1.1); }
+    }
+
+    /* Illustration Styling */
+    .illustration-container {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      margin-bottom: 5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ill-shape {
+      position: absolute;
+      border-radius: var(--radius-xl);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .ill-shape-1 {
+      width: 100px;
+      height: 100px;
+      transform: rotate(-12deg) translateX(-180px);
+      font-size: 2.5rem;
+      color: rgba(56, 189, 248, 0.2);
+    }
+
+    .ill-shape-2 {
+      width: 140px;
+      height: 140px;
+      z-index: 2;
+      font-size: 3.5rem;
+      color: var(--accent);
+      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.5);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .ill-shape-3 {
+      width: 90px;
+      height: 90px;
+      transform: rotate(15deg) translateX(180px);
+      font-size: 2.25rem;
+      color: rgba(56, 189, 248, 0.2);
+    }
+
+    .illustration-container:hover .ill-shape-2 {
+      transform: scale(1.05) rotate(2deg);
+      border-color: var(--accent);
+    }
+
+    .illustration-container:hover .ill-shape-1 {
+      transform: rotate(-20deg) translateX(-200px) scale(0.9);
+    }
+
+    .illustration-container:hover .ill-shape-3 {
+      transform: rotate(25deg) translateX(200px) scale(0.9);
+    }
+
+    /* Footer */
+    .welcome-footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8125rem;
+      border-top: 1px solid var(--glass-border);
+      width: 100%;
+      letter-spacing: 0.02em;
+      opacity: 0.8;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .welcome-footer b {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Animations Refinement */
+    .animate-fade {
+      animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .animate-slide-up {
+      opacity: 0;
+      animation: slideUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <script src="js/theme.js"></script>
+</head>
+<body class="animate-fade">
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <main class="welcome-container">
+    <img src="assets/icons/custom-logo.png" alt="DSIMS Logo" class="hero-logo animate-slide-up">
+    
+    <div class="animate-slide-up" style="animation-delay: 0.1s;">
+      <h1 class="hero-title">DSIMS</h1>
+      <p class="hero-tagline">Digital Shopkeeper Inventory Management System</p>
+      <p class="hero-subtitle">
+        The all-in-one professional toolkit to manage your inventory, generate pro-grade invoices, and track business growth with ease.
+      </p>
+    </div>
+
+    <div class="cta-group animate-slide-up" style="animation-delay: 0.2s;">
+      <button class="btn btn-primary btn-hero" onclick="location.href='auth.html?mode=login'">
+        <i class="fas fa-rocket"></i> Get Started
+      </button>
+      <button class="btn btn-secondary btn-hero" onclick="location.href='auth.html?mode=signup'">
+        <i class="fas fa-user-plus"></i> Create Account
+      </button>
+    </div>
+
+    <!-- Middle Section Illustration -->
+    <div class="illustration-container animate-slide-up" style="animation-delay: 0.3s;">
+      <div class="ill-shape ill-shape-1">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="ill-shape ill-shape-2">
+        <i class="fas fa-cubes"></i>
+      </div>
+      <div class="ill-shape ill-shape-3">
+        <i class="fas fa-file-invoice-dollar"></i>
+      </div>
+    </div>
+
+    <div class="features-grid animate-slide-up" style="animation-delay: 0.4s;">
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-boxes"></i></div>
+        <h3>Smart Inventory</h3>
+        <p>Real-time stock tracking with intelligent low-stock alerts and automated movement history.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-file-invoice"></i></div>
+        <h3>Pro Invoicing</h3>
+        <p>Beautiful, professional-grade invoices designed for modern businesses. Export to PDF in one click.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
+        <h3>Business Intelligence</h3>
+        <p>Deep insights into your sales performance with interactive charts and comprehensive reporting tools.</p>
+      </div>
+    </div>
+  </main>
+
+  <footer class="welcome-footer">
+    Designed & Developed with <i class="fas fa-heart" style="color: var(--danger); font-size: 0.7rem; margin: 0 0.25rem;"></i> by <b>Swayam & Yash</b>
+  </footer>
+
+  <!-- Firebase SDK (Compat) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/firebase-storage.js"></script>
+  <script>
+    // Redirect if already logged in
+    (async () => {
+      try {
+        const current = await StorageAPI.getCurrentUser();
+        if (current) {
+          const hasShop = await StorageAPI.getShopDetails();
+          window.location.href = hasShop ? 'dashboard.html' : 'setup.html';
+        }
+      } catch (_) {}
+    })();
+  </script>
+</body>
+</html>
