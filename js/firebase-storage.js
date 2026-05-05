@@ -51,7 +51,7 @@
       
       // If updating current user, update session too
       const current = await this.getCurrentUser();
-      if (current && current.email.toLowerCase() === normalized) {
+      if (current && (current.email || '').toLowerCase() === normalized) {
         await this.setCurrentUser({ ...current, ...data });
       }
       return updated;

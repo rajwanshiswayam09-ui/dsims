@@ -145,7 +145,11 @@ const handleGoogleSignIn = async () => {
     const result = await firebase.auth().signInWithPopup(provider);
     const user = result.user;
 
-    const normalizedEmail = user.email.toLowerCase();
+    const userEmail = user.email || '';
+    if (!userEmail) {
+      throw new Error('No email provided by Google account.');
+    }
+    const normalizedEmail = userEmail.toLowerCase();
     const existingUser = await StorageAPI.findUser(normalizedEmail);
 
     if (!existingUser) {
