@@ -27,7 +27,7 @@ const switchMode = (next) => {
   mode = next;
   const isSignup = mode === 'signup';
   nameField.style.display = isSignup ? 'block' : 'none';
-  if (confirmPasswordInput && confirmPasswordInput.parentElement && confirmPasswordInput.parentElement.parentElement) {
+  if (confirmPasswordInput?.parentElement?.parentElement) {
     confirmPasswordInput.parentElement.parentElement.style.display = isSignup ? 'block' : 'none';
   }
   signupTab.classList.toggle('active', isSignup);
@@ -38,7 +38,6 @@ const switchMode = (next) => {
 signupTab.addEventListener('click', () => switchMode('signup'));
 loginTab.addEventListener('click', () => switchMode('login'));
 
-// Handle query params for mode
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const initialMode = params.get('mode');
@@ -48,16 +47,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const hashPassword = async (password) => {
-  if (!window.crypto || !window.crypto.subtle) {
-    throw new Error('This browser does not support secure password hashing (SHA-256).');
+  if (!window.crypto?.subtle) {
+    throw new Error('Browser does not support secure hashing.');
   }
   const encoder = new TextEncoder();
   const data = encoder.encode(password);
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 };
 
+// ================= NORMAL LOGIN / SIGNUP =================
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   setMessage(null, '');
@@ -67,9 +68,10 @@ authForm.addEventListener('submit', async (e) => {
   const confirmPassword = confirmPasswordInput?.value?.trim() || "";
 
   if (!emailValid(email)) {
-    setMessage('error', 'Please enter a valid email address.');
+    setMessage('error', 'Please enter a valid email.');
     return;
   }
+
   if (password.length < 6) {
     setMessage('error', 'Password must be at least 6 characters.');
     return;
@@ -78,27 +80,20 @@ authForm.addEventListener('submit', async (e) => {
   try {
     if (mode === 'signup') {
       const name = nameInput.value.trim();
-      if (!name) {
-        setMessage('error', 'Please enter your full name.');
-        return;
-      }
-      if (!confirmPassword) {
-        setMessage('error', 'Please confirm your password.');
-        return;
-      }
-      if (password !== confirmPassword) {
-        setMessage('error', 'Passwords do not match.');
-        return;
-      }
+
+      if (!name) return setMessage('error', 'Enter your name.');
+      if (!confirmPassword) return setMessage('error', 'Confirm password.');
+      if (password !== confirmPassword) return setMessage('error', 'Passwords do not match.');
 
       const existing = await StorageAPI.findUser(email);
       if (existing) {
-        setMessage('error', 'An account with this email already exists. Please log in.');
+        setMessage('error', 'Account exists. Please login.');
         switchMode('login');
         return;
       }
 
       const passwordHash = await hashPassword(password);
+
       const userRecord = await StorageAPI.addUser({
         name,
         email,
@@ -106,73 +101,71 @@ authForm.addEventListener('submit', async (e) => {
       });
 
       await StorageAPI.setCurrentUser(userRecord);
-      const hasShop = await StorageAPI.getShopDetails();
-      setMessage('success', 'Account created successfully. Redirecting...');
-      window.location.href = hasShop ? 'dashboard.html' : 'setup.html';
+
     } else {
       const user = await StorageAPI.findUser(email);
-      if (!user) {
-        setMessage('error', 'Incorrect email or password.');
-        return;
-      }
+      if (!user) return setMessage('error', 'Invalid credentials.');
 
       const passwordHash = await hashPassword(password);
       if (user.passwordHash !== passwordHash) {
-        setMessage('error', 'Incorrect email or password.');
-        return;
+        return setMessage('error', 'Invalid credentials.');
       }
 
       await StorageAPI.setCurrentUser(user);
-      const hasShop = await StorageAPI.getShopDetails();
-      setMessage('success', 'Login successful. Redirecting...');
-      window.location.href = hasShop ? 'dashboard.html' : 'setup.html';
     }
-  } catch (error) {
-    setMessage('error', error.message || 'Something went wrong. Please try again.');
-  } finally {
-    passwordInput.value = '';
-    if (confirmPasswordInput) {
-      confirmPasswordInput.value = '';
-    }
+
+    const hasShop = await StorageAPI.getShopDetails();
+    setMessage('success', 'Success! Redirecting...');
+    window.location.href = hasShop ? 'dashboard.html' : 'setup.html';
+
+  } catch (err) {
+    setMessage('error', err.message || 'Something went wrong.');
   }
 });
 
-// Google Sign-In
+// ================= GOOGLE LOGIN (FIXED 🔥) =================
 const handleGoogleSignIn = async () => {
   setMessage(null, '');
+
   try {
     const provider = new firebase.auth.GoogleAuthProvider();
     const result = await firebase.auth().signInWithPopup(provider);
     const user = result.user;
 
-    const userEmail = user.email || '';
-    if (!userEmail) {
-      throw new Error('No email provided by Google account.');
-    }
-    const normalizedEmail = userEmail.toLowerCase();
-    const existingUser = await StorageAPI.findUser(normalizedEmail);
+    const email = (user.email || "").toLowerCase();
+    if (!email) throw new Error('Failed to get email from Google.');
 
-    if (!existingUser) {
-      const record = {
-        name: user.displayName || 'User',
-        email: normalizedEmail,
-        passwordHash: null,
+    let userRecord = await StorageAPI.findUser(email);
+
+    // Create user if not exists
+    if (!userRecord) {
+      userRecord = {
+        name: user.displayName || "User",
+        email: email,
         uid: user.uid,
+        passwordHash: null,
         createdAt: new Date().toISOString()
       };
-      await db.collection('users').doc(normalizedEmail).set(record);
+
+      // Save to Firebase
+      if (typeof db !== "undefined") {
+        await db.collection('users').doc(email).set(userRecord);
+      }
     }
 
-    const userRecord = await StorageAPI.findUser(normalizedEmail);
     await StorageAPI.setCurrentUser(userRecord);
 
-    setMessage('success', 'Login successful. Redirecting...');
     const hasShop = await StorageAPI.getShopDetails();
+
+    setMessage('success', 'Google login successful!');
+
     setTimeout(() => {
       window.location.href = hasShop ? 'dashboard.html' : 'setup.html';
     }, 1000);
+
   } catch (error) {
-    setMessage('error', error.message || 'Google sign-in failed. Please try again.');
+    console.error(error);
+    setMessage('error', error.message || 'Google login failed.');
   }
 };
 
@@ -180,7 +173,7 @@ if (googleSignInBtn) {
   googleSignInBtn.addEventListener('click', handleGoogleSignIn);
 }
 
-// Auto redirect if already logged in
+// ================= AUTO REDIRECT =================
 (async () => {
   const current = await StorageAPI.getCurrentUser();
   if (current) {
