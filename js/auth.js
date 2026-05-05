@@ -62,9 +62,9 @@ authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   setMessage(null, '');
 
-  const email = emailInput.value.trim().toLowerCase();
+  const email = (emailInput.value || "").trim().toLowerCase();
   const password = passwordInput.value.trim();
-  const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value.trim() : '';
+  const confirmPassword = confirmPasswordInput?.value?.trim() || "";
 
   if (!emailValid(email)) {
     setMessage('error', 'Please enter a valid email address.');
