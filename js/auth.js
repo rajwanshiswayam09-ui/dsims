@@ -8,6 +8,7 @@ const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 const messageBox = document.getElementById('authMessage');
+const googleSignInBtn = document.getElementById('googleSignInBtn');
 
 let mode = 'signup';
 
@@ -135,6 +136,45 @@ authForm.addEventListener('submit', async (e) => {
     }
   }
 });
+
+// Google Sign-In
+const handleGoogleSignIn = async () => {
+  setMessage(null, '');
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const result = await firebase.auth().signInWithPopup(provider);
+    const user = result.user;
+
+    const normalizedEmail = user.email.toLowerCase();
+    const existingUser = await StorageAPI.findUser(normalizedEmail);
+
+    if (!existingUser) {
+      const record = {
+        name: user.displayName || 'User',
+        email: normalizedEmail,
+        passwordHash: null,
+        uid: user.uid,
+        createdAt: new Date().toISOString()
+      };
+      await db.collection('users').doc(normalizedEmail).set(record);
+    }
+
+    const userRecord = await StorageAPI.findUser(normalizedEmail);
+    await StorageAPI.setCurrentUser(userRecord);
+
+    setMessage('success', 'Login successful. Redirecting...');
+    const hasShop = await StorageAPI.getShopDetails();
+    setTimeout(() => {
+      window.location.href = hasShop ? 'dashboard.html' : 'setup.html';
+    }, 1000);
+  } catch (error) {
+    setMessage('error', error.message || 'Google sign-in failed. Please try again.');
+  }
+};
+
+if (googleSignInBtn) {
+  googleSignInBtn.addEventListener('click', handleGoogleSignIn);
+}
 
 // Auto redirect if already logged in
 (async () => {
