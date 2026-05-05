@@ -131,26 +131,27 @@ const handleGoogleSignIn = async () => {
     const provider = new firebase.auth.GoogleAuthProvider();
     const result = await firebase.auth().signInWithPopup(provider);
     const user = result.user;
+    console.log(result.user);
 
-    const email = (user.email || "").toLowerCase();
-    if (!email) throw new Error('Failed to get email from Google.');
+    const email = (user?.email || '').trim().toLowerCase();
+    const fallbackEmail = `${user.uid}@google.user`;
+    const resolvedEmail = email || fallbackEmail;
 
-    let userRecord = await StorageAPI.findUser(email);
+    // Prefer real email, but support fallback identity for edge cases.
+    let userRecord = await StorageAPI.findUser(resolvedEmail);
+    if (!userRecord && email) {
+      userRecord = await StorageAPI.findUser(fallbackEmail);
+    }
 
     // Create user if not exists
     if (!userRecord) {
-      userRecord = {
+      userRecord = await StorageAPI.addUser({
         name: user.displayName || "User",
-        email: email,
+        email: resolvedEmail,
         uid: user.uid,
         passwordHash: null,
         createdAt: new Date().toISOString()
-      };
-
-      // Save to Firebase
-      if (typeof db !== "undefined") {
-        await db.collection('users').doc(email).set(userRecord);
-      }
+      });
     }
 
     await StorageAPI.setCurrentUser(userRecord);
