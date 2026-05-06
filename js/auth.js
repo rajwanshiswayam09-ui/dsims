@@ -8,7 +8,6 @@ const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 const messageBox = document.getElementById('authMessage');
-const googleSignInBtn = document.getElementById('googleSignInBtn');
 
 let mode = 'signup';
 
@@ -46,18 +45,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-const hashPassword = async (password) => {
-  if (!window.crypto?.subtle) {
-    throw new Error('Browser does not support secure hashing.');
-  }
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hashBuffer))
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('');
-};
-
 // ================= NORMAL LOGIN / SIGNUP =================
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -85,96 +72,38 @@ authForm.addEventListener('submit', async (e) => {
       if (!confirmPassword) return setMessage('error', 'Confirm password.');
       if (password !== confirmPassword) return setMessage('error', 'Passwords do not match.');
 
-      const existing = await StorageAPI.findUser(email);
-      if (existing) {
-        setMessage('error', 'Account exists. Please login.');
-        switchMode('login');
-        return;
-      }
-
-      const passwordHash = await hashPassword(password);
-
-      const userRecord = await StorageAPI.addUser({
-        name,
-        email,
-        passwordHash
+      // Sign up with Firebase Auth
+      const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      
+      // Update display name
+      await userCredential.user.updateProfile({
+        displayName: name
       });
-
-      await StorageAPI.setCurrentUser(userRecord);
+      
+      // Set current user
+      await StorageAPI.setCurrentUser(userCredential.user);
 
     } else {
-      const user = await StorageAPI.findUser(email);
-      if (!user) return setMessage('error', 'Invalid credentials.');
-
-      const passwordHash = await hashPassword(password);
-      if (user.passwordHash !== passwordHash) {
-        return setMessage('error', 'Invalid credentials.');
-      }
-
-      await StorageAPI.setCurrentUser(user);
+      // Sign in with Firebase Auth
+      const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+      await StorageAPI.setCurrentUser(userCredential.user);
     }
 
-    const hasShop = await StorageAPI.getShopDetails();
+    // Check if setup is completed
+    const hasCompletedSetup = await StorageAPI.hasCompletedSetup();
     setMessage('success', 'Success! Redirecting...');
-    window.location.href = hasShop ? 'dashboard.html' : 'setup.html';
+    window.location.href = hasCompletedSetup ? 'dashboard.html' : 'setup.html';
 
   } catch (err) {
     setMessage('error', err.message || 'Something went wrong.');
   }
 });
 
-// ================= GOOGLE LOGIN (FIXED 🔥) =================
-const handleGoogleSignIn = async () => {
-  setMessage(null, '');
-
-  try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const result = await firebase.auth().signInWithPopup(provider);
-    const user = result.user;
-    console.log(user);
-
-    const email = user.email;
-    if (!email) throw new Error('Failed to get email from Google.');
-    const normalizedEmail = email.trim().toLowerCase();
-
-    let userRecord = await StorageAPI.findUser(normalizedEmail);
-
-    // Create user if not exists
-    if (!userRecord) {
-      userRecord = await StorageAPI.addUser({
-        name: user.displayName || "User",
-        email: normalizedEmail,
-        uid: user.uid,
-        passwordHash: null,
-        createdAt: new Date().toISOString()
-      });
-    }
-
-    await StorageAPI.setCurrentUser(userRecord);
-
-    const hasShop = await StorageAPI.getShopDetails();
-
-    setMessage('success', 'Google login successful!');
-
-    setTimeout(() => {
-      window.location.href = hasShop ? 'dashboard.html' : 'setup.html';
-    }, 1000);
-
-  } catch (error) {
-    console.error(error);
-    setMessage('error', error.message || 'Google login failed.');
-  }
-};
-
-if (googleSignInBtn) {
-  googleSignInBtn.addEventListener('click', handleGoogleSignIn);
-}
-
 // ================= AUTO REDIRECT =================
-(async () => {
-  const current = await StorageAPI.getCurrentUser();
-  if (current) {
-    const hasShop = await StorageAPI.getShopDetails();
-    window.location.href = hasShop ? 'dashboard.html' : 'setup.html';
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (user) {
+    await StorageAPI.setCurrentUser(user);
+    const hasCompletedSetup = await StorageAPI.hasCompletedSetup();
+    window.location.href = hasCompletedSetup ? 'dashboard.html' : 'setup.html';
   }
-})();
+});

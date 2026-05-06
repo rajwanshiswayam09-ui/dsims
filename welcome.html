@@ -8,21 +8,25 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
     :root {
-      --hero-gradient: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-      --glass-bg: rgba(30, 41, 59, 0.4);
-      --glass-border: rgba(148, 163, 184, 0.1);
-      --glass-hover: rgba(30, 41, 59, 0.6);
+      --hero-gradient: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 50%, #fff 100%);
+      --glass-bg: rgba(30, 41, 59, 0.5);
+      --glass-border: rgba(148, 163, 184, 0.15);
+      --glass-hover: rgba(30, 41, 59, 0.7);
+      --neon-blue: #38bdf8;
+      --neon-purple: #8b5cf6;
     }
 
     body {
-      background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.08), transparent 40%),
-                  radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.05), transparent 40%),
+      background: radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.08), transparent 40%),
+                  radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08), transparent 40%),
+                  radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 1), transparent 70%),
                   var(--bg-main);
       display: flex;
       flex-direction: column;
       min-height: 100vh;
       overflow-x: hidden;
       color: var(--text-main);
+      position: relative;
     }
 
     .welcome-container {
@@ -33,108 +37,131 @@
       justify-content: center;
       padding: 6rem 2rem;
       text-align: center;
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 0 auto;
+      position: relative;
+      z-index: 10;
     }
 
     .hero-logo {
-      width: 90px;
-      height: 90px;
+      width: 100px;
+      height: 100px;
       margin-bottom: 2.5rem;
-      filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.3));
+      filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.4)) drop-shadow(0 0 60px rgba(139, 92, 246, 0.2));
       animation: logoPulse 4s infinite ease-in-out;
     }
 
     @keyframes logoPulse {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.3)); }
-      50% { transform: scale(1.05); filter: drop-shadow(0 0 35px rgba(56, 189, 248, 0.5)); }
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.4)) drop-shadow(0 0 60px rgba(139, 92, 246, 0.2)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 50px rgba(56, 189, 248, 0.6)) drop-shadow(0 0 100px rgba(139, 92, 246, 0.3)); }
     }
 
     .hero-title {
-      font-size: 4rem;
-      font-weight: 800;
+      font-size: 4.5rem;
+      font-weight: 900;
       background: var(--hero-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 0.75rem;
       line-height: 1;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
+      text-shadow: 0 0 80px rgba(56, 189, 248, 0.3);
     }
 
     @media (max-width: 768px) {
-      .hero-title { font-size: 2.5rem; }
+      .hero-title { font-size: 2.75rem; }
       .hero-tagline { font-size: 1.25rem; }
       .welcome-container { padding: 4rem 1.5rem; }
     }
 
     .hero-tagline {
-      font-size: 1.5rem;
-      font-weight: 600;
+      font-size: 1.6rem;
+      font-weight: 700;
       color: var(--text-main);
       margin-bottom: 1rem;
-      letter-spacing: 0.05em;
-      opacity: 0.9;
+      letter-spacing: 0.06em;
+      opacity: 0.95;
     }
 
     .hero-subtitle {
-      font-size: 1.125rem;
+      font-size: 1.15rem;
       color: var(--text-muted);
-      max-width: 650px;
+      max-width: 700px;
       margin-bottom: 3.5rem;
-      line-height: 1.6;
+      line-height: 1.7;
       font-weight: 400;
-      font-style: italic;
     }
 
     .cta-group {
       display: flex;
-      flex-direction: column;
       gap: 1.25rem;
       margin-bottom: 5rem;
       width: 100%;
-      max-width: 320px;
+      max-width: 420px;
       position: relative;
       z-index: 10;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     .btn-hero {
-      width: 100%;
-      padding: 1.25rem 2rem;
-      font-size: 1rem;
-      border-radius: var(--radius-lg);
+      padding: 1.25rem 2.5rem;
+      font-size: 1.05rem;
+      border-radius: 16px;
       font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+      letter-spacing: 0.08em;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 0.75rem;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .btn-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .btn-hero:hover::before {
+      left: 100%;
     }
 
     .btn-hero.btn-primary {
-      background: var(--accent);
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
       color: var(--text-inverse);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.3), 0 4px 15px rgba(139, 92, 246, 0.2);
+      border: none;
     }
 
     .btn-hero.btn-primary:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.25);
-      background: var(--accent-hover);
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 15px 50px rgba(56, 189, 248, 0.4), 0 8px 30px rgba(139, 92, 246, 0.3);
     }
 
     .btn-hero.btn-secondary {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       color: var(--text-main);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
 
     .btn-hero.btn-secondary:hover {
       background: var(--glass-hover);
-      transform: translateY(-4px);
-      border-color: rgba(56, 189, 248, 0.3);
+      transform: translateY(-6px) scale(1.03);
+      border-color: rgba(56, 189, 248, 0.5);
+      box-shadow: 0 10px 40px rgba(56, 189, 248, 0.15);
     }
 
     .features-grid {
@@ -148,42 +175,65 @@
     .feature-card {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      padding: 2.5rem 2rem;
-      border-radius: var(--radius-xl);
-      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-      backdrop-filter: blur(10px);
+      padding: 2.75rem 2.25rem;
+      border-radius: 20px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-purple), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .feature-card:hover::before {
+      transform: translateX(100%);
     }
 
     .feature-card:hover {
       background: var(--glass-hover);
-      transform: translateY(-8px);
-      border-color: rgba(56, 189, 248, 0.4);
-      box-shadow: var(--shadow-lg);
+      transform: translateY(-10px);
+      border-color: rgba(56, 189, 248, 0.5);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(56, 189, 248, 0.1);
     }
 
     .feature-icon {
-      font-size: 2.25rem;
-      color: var(--accent);
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       margin-bottom: 1.5rem;
       display: inline-block;
-      transition: var(--transition);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .feature-card:hover .feature-icon {
-      transform: scale(1.1);
+      transform: scale(1.15) rotate(5deg);
+      filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.4));
     }
 
     .feature-card h3 {
-      font-size: 1.35rem;
-      font-weight: 700;
+      font-size: 1.4rem;
+      font-weight: 800;
       margin-bottom: 1rem;
       color: #fff;
     }
 
     .feature-card p {
-      font-size: 0.9375rem;
-      line-height: 1.7;
+      font-size: 0.95rem;
+      line-height: 1.8;
       color: var(--text-muted);
       margin-bottom: 0;
     }
@@ -197,9 +247,11 @@
       .welcome-container { padding: 3rem 1.5rem; }
       .features-grid { grid-template-columns: 1fr; }
       .feature-card { padding: 2.5rem 2rem; }
+      .cta-group { flex-direction: column; }
+      .btn-hero { width: 100%; }
     }
 
-    /* Background Elements */
+    /* Background Elements - Floating Blobs */
     .bg-blobs {
       position: fixed;
       inset: 0;
@@ -210,83 +262,114 @@
 
     .blob {
       position: absolute;
-      width: 600px;
-      height: 600px;
-      background: var(--accent);
-      filter: blur(140px);
-      opacity: 0.07;
+      width: 700px;
+      height: 700px;
       border-radius: 50%;
-      animation: blobFloat 20s infinite alternate ease-in-out;
+      filter: blur(160px);
+      opacity: 0.08;
+      animation: blobFloat 25s infinite alternate ease-in-out;
     }
 
-    .blob-1 { top: -200px; right: -100px; animation-delay: 0s; }
-    .blob-2 { bottom: -200px; left: -100px; animation-delay: -5s; }
+    .blob-1 {
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+      top: -250px;
+      right: -150px;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-blue) 100%);
+      bottom: -250px;
+      left: -150px;
+      animation-delay: -8s;
+    }
+
+    .blob-3 {
+      background: linear-gradient(135deg, var(--neon-blue) 0%, #ec4899 100%);
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 500px;
+      opacity: 0.05;
+      animation: blobPulse 15s infinite ease-in-out;
+    }
 
     @keyframes blobFloat {
       0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(100px, 50px) scale(1.1); }
+      50% { transform: translate(80px, -60px) scale(1.08); }
+      100% { transform: translate(120px, 40px) scale(1.12); }
+    }
+
+    @keyframes blobPulse {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.05; }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.08; }
     }
 
     /* Illustration Styling */
     .illustration-container {
       position: relative;
       width: 100%;
-      height: 180px;
+      height: 200px;
       margin-bottom: 5rem;
       display: flex;
       align-items: center;
       justify-content: center;
+      perspective: 1000px;
     }
 
     .ill-shape {
       position: absolute;
-      border-radius: var(--radius-xl);
+      border-radius: 20px;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+      transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     }
 
     .ill-shape-1 {
-      width: 100px;
-      height: 100px;
-      transform: rotate(-12deg) translateX(-180px);
-      font-size: 2.5rem;
-      color: rgba(56, 189, 248, 0.2);
+      width: 110px;
+      height: 110px;
+      transform: rotate(-12deg) translateX(-200px);
+      font-size: 2.75rem;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
     }
 
     .ill-shape-2 {
-      width: 140px;
-      height: 140px;
+      width: 160px;
+      height: 160px;
       z-index: 2;
-      font-size: 3.5rem;
-      color: var(--accent);
-      box-shadow: 0 30px 60px -15px rgba(0,0,0,0.5);
-      border-color: rgba(56, 189, 248, 0.3);
+      font-size: 4rem;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(139, 92, 246, 0.15) 100%);
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 30px 80px -15px rgba(0,0,0,0.5), 0 0 60px rgba(56, 189, 248, 0.1);
     }
 
     .ill-shape-3 {
-      width: 90px;
-      height: 90px;
-      transform: rotate(15deg) translateX(180px);
-      font-size: 2.25rem;
-      color: rgba(56, 189, 248, 0.2);
+      width: 100px;
+      height: 100px;
+      transform: rotate(15deg) translateX(200px);
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(56, 189, 248, 0.1) 100%);
     }
 
     .illustration-container:hover .ill-shape-2 {
-      transform: scale(1.05) rotate(2deg);
-      border-color: var(--accent);
+      transform: scale(1.08) rotate(3deg);
+      border-color: var(--neon-blue);
+      box-shadow: 0 40px 100px -20px rgba(0,0,0,0.5), 0 0 80px rgba(56, 189, 248, 0.2);
     }
 
     .illustration-container:hover .ill-shape-1 {
-      transform: rotate(-20deg) translateX(-200px) scale(0.9);
+      transform: rotate(-22deg) translateX(-220px) scale(0.9);
     }
 
     .illustration-container:hover .ill-shape-3 {
-      transform: rotate(25deg) translateX(200px) scale(0.9);
+      transform: rotate(28deg) translateX(220px) scale(0.9);
     }
 
     /* Footer */
@@ -294,28 +377,29 @@
       padding: 3rem 2rem;
       text-align: center;
       color: var(--text-muted);
-      font-size: 0.8125rem;
+      font-size: 0.875rem;
       border-top: 1px solid var(--glass-border);
       width: 100%;
       letter-spacing: 0.02em;
-      opacity: 0.8;
-      background: rgba(15, 23, 42, 0.5);
-      backdrop-filter: blur(10px);
+      opacity: 0.85;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
     }
 
     .welcome-footer b {
       color: var(--text-main);
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    /* Animations Refinement */
+    /* Animations */
     .animate-fade {
-      animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeIn 0.9s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .animate-slide-up {
       opacity: 0;
-      animation: slideUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+      animation: slideUp 0.9s cubic-bezier(0.4, 0, 0.2, 1) forwards;
     }
 
     @keyframes fadeIn {
@@ -324,8 +408,34 @@
     }
 
     @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
+      from { opacity: 0; transform: translateY(40px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--neon-blue);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: particleFloat 12s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.3; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
     }
   </style>
   <script src="js/theme.js"></script>
@@ -334,7 +444,10 @@
   <div class="bg-blobs">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
   </div>
+
+  <div class="particles" id="particles"></div>
 
   <main class="welcome-container">
     <img src="assets/icons/custom-logo.png" alt="DSIMS Logo" class="hero-logo animate-slide-up">
@@ -343,7 +456,7 @@
       <h1 class="hero-title">DSIMS</h1>
       <p class="hero-tagline">Digital Shopkeeper Inventory Management System</p>
       <p class="hero-subtitle">
-        The all-in-one professional toolkit to manage your inventory, generate pro-grade invoices, and track business growth with ease.
+        The all-in-one professional toolkit to manage your inventory, generate pro-grade invoices, and track business growth with seamless efficiency.
       </p>
     </div>
 
@@ -389,16 +502,41 @@
   </main>
 
   <footer class="welcome-footer">
-    Designed & Developed with <i class="fas fa-heart" style="color: var(--danger); font-size: 0.7rem; margin: 0 0.25rem;"></i> by <b>Swayam & Yash</b>
+    Designed & Developed with <i class="fas fa-heart" style="color: var(--danger); font-size: 0.75rem; margin: 0 0.25rem;"></i> by <b>Swayam & Yash</b>
   </footer>
 
   <!-- Firebase SDK (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/firebase-storage.js"></script>
   <script>
+    // Create floating particles
+    (function createParticles() {
+      const container = document.getElementById('particles');
+      if (!container) return;
+      
+      const particleCount = 30;
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 12 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        particle.style.width = (Math.random() * 4 + 2) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.opacity = Math.random() * 0.4 + 0.1;
+        
+        // Random color between blue and purple
+        const colors = ['#38bdf8', '#8b5cf6', '#a78bfa'];
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        
+        container.appendChild(particle);
+      }
+    })();
+
     // Redirect if already logged in
     (async () => {
       try {

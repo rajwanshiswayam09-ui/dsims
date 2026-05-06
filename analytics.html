@@ -7,14 +7,171 @@
   <link rel="stylesheet" href="css/app-shell.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
+    :root {
+      --hero-gradient: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 50%, #fff 100%);
+      --glass-bg: rgba(30, 41, 59, 0.5);
+      --glass-border: rgba(148, 163, 184, 0.15);
+      --neon-blue: #38bdf8;
+      --neon-purple: #8b5cf6;
+    }
+
+    body { 
+      background: radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.06), transparent 40%),
+                  radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.06), transparent 40%),
+                  var(--bg-main);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 0 20px rgba(56, 189, 248, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-purple), transparent);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+      color: var(--text-inverse);
+      border: none;
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.3), 0 4px 15px rgba(139, 92, 246, 0.2);
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 50px rgba(56, 189, 248, 0.4), 0 8px 30px rgba(139, 92, 246, 0.3);
+    }
+
     .chart-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 1.5rem; }
-    .chart-container { background: var(--bg-card); border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--border); box-shadow: var(--shadow-md); }
+    .chart-container { 
+      background: var(--glass-bg); 
+      border: 1px solid var(--glass-border); 
+      border-radius: var(--radius-lg); 
+      padding: 1.5rem; 
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+    }
+    .chart-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-purple), transparent);
+    }
     canvas { width: 100% !important; height: 300px !important; }
+
+    /* Background Blobs */
+    .bg-blobs {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.06;
+      animation: blobFloat 25s infinite alternate ease-in-out;
+    }
+
+    .blob-1 {
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+      top: -200px;
+      right: -150px;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-blue) 100%);
+      bottom: -200px;
+      left: -150px;
+      animation-delay: -8s;
+    }
+
+    @keyframes blobFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(70px, -50px) scale(1.08); }
+      100% { transform: translate(100px, 30px) scale(1.12); }
+    }
+
+    /* Particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--neon-blue);
+      border-radius: 50%;
+      opacity: 0.25;
+      animation: particleFloat 12s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.25; }
+      90% { opacity: 0.25; }
+      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+    }
   </style>
   <script src="js/theme.js"></script>
 </head>
 <body class="animate-fade">
-  <div class="app-container">
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <div class="particles" id="particles"></div>
+
+  <div class="app-container" style="position: relative; z-index: 10;">
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <img src="assets/icons/custom-logo.png" alt="DSIMS" class="sidebar-logo">
@@ -59,7 +216,7 @@
         <div class="animate-slide-up">
           <div class="chart-grid">
             <div class="chart-container">
-              <h4 style="margin-bottom: 1rem;"><i class="fas fa-chart-bar" style="color: var(--accent);"></i> Monthly Stock Usage</h4>
+              <h4 style="margin-bottom: 1rem;"><i class="fas fa-chart-bar" style="color: var(--neon-blue);"></i> Monthly Stock Usage</h4>
               <canvas id="usageChart"></canvas>
             </div>
             <div class="chart-container">
@@ -67,7 +224,7 @@
               <canvas id="topItemsChart"></canvas>
             </div>
             <div class="chart-container">
-              <h4 style="margin-bottom: 1rem;"><i class="fas fa-chart-pie" style="color: var(--accent);"></i> Sales Distribution</h4>
+              <h4 style="margin-bottom: 1rem;"><i class="fas fa-chart-pie" style="color: var(--neon-blue);"></i> Sales Distribution</h4>
               <canvas id="pieChart"></canvas>
             </div>
             <div class="chart-container">
@@ -75,7 +232,7 @@
               <canvas id="shopHealthChart"></canvas>
             </div>
             <div class="chart-container" style="grid-column: 1 / -1;">
-              <h4 style="margin-bottom: 1rem;"><i class="fas fa-trending-up" style="color: var(--accent);"></i> Inventory Value Trend</h4>
+              <h4 style="margin-bottom: 1rem;"><i class="fas fa-trending-up" style="color: var(--neon-blue);"></i> Inventory Value Trend</h4>
               <canvas id="valueTrendChart"></canvas>
             </div>
           </div>
@@ -88,11 +245,37 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <!-- Firebase SDK (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/firebase-storage.js"></script>
   <script src="js/inventory.js"></script>
   <script src="js/analytics.js"></script>
+  <script>
+    // Create floating particles
+    (function createParticles() {
+      const container = document.getElementById('particles');
+      if (!container) return;
+      
+      const particleCount = 15;
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 12 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        particle.style.width = (Math.random() * 4 + 2) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.opacity = Math.random() * 0.35 + 0.1;
+        
+        // Random color between blue and purple
+        const colors = ['#38bdf8', '#8b5cf6', '#a78bfa'];
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        
+        container.appendChild(particle);
+      }
+    })();
+  </script>
 </body>
 </html>

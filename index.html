@@ -6,10 +6,22 @@
   <title>DSIMS</title>
   <link rel="stylesheet" href="css/app-shell.css">
   <style>
+    :root {
+      --neon-blue: #38bdf8;
+      --neon-purple: #8b5cf6;
+    }
+
+    body {
+      background: radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.08), transparent 40%),
+                  radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08), transparent 40%),
+                  radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 1), transparent 70%),
+                  #0f172a;
+    }
+
     .splash-screen {
       position: fixed;
       inset: 0;
-      background: #0f172a;
+      background: transparent;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -17,39 +29,125 @@
       z-index: 9999;
       color: white;
     }
+
     .splash-logo { 
       width: 150px; 
       height: 150px; 
       margin-bottom: 2.5rem; 
-      filter: drop-shadow(0 0 20px var(--accent));
+      filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.5));
       animation: pulseAndGlow 2.5s infinite ease-in-out; 
     }
-    .loader { width: 300px; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; position: relative; }
+
+    .loader { 
+      width: 300px; 
+      height: 6px; 
+      background: rgba(255,255,255,0.05); 
+      border-radius: 10px; 
+      overflow: hidden; 
+      position: relative; 
+    }
+
     .loader-bar { 
       height: 100%; 
-      background: linear-gradient(90deg, var(--accent), #818cf8); 
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-purple)); 
       width: 0; 
       animation: load 2.5s cubic-bezier(0.65, 0, 0.35, 1) forwards; 
-      box-shadow: 0 0 15px var(--accent);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
     }
+
     @keyframes pulseAndGlow { 
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px var(--accent)); opacity: 1; } 
-      50% { transform: scale(1.1); filter: drop-shadow(0 0 30px var(--accent)); opacity: 0.9; } 
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 30px rgba(56, 189, 248, 0.5)); opacity: 1; } 
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 50px rgba(56, 189, 248, 0.8)); opacity: 0.95; } 
     }
+
     @keyframes load { 0% { width: 0; } 30% { width: 40%; } 70% { width: 85%; } 100% { width: 100%; } }
+
     .splash-text {
       margin-top: 1.5rem; 
-      color: var(--text-muted); 
+      color: #94a3b8; 
       font-size: 0.75rem; 
       font-weight: 600;
       letter-spacing: 0.3em;
       text-transform: uppercase;
       animation: fadeInOut 2s infinite;
     }
+
     @keyframes fadeInOut { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+    /* Background Blobs */
+    .bg-blobs {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.08;
+      animation: blobFloat 25s infinite alternate ease-in-out;
+    }
+
+    .blob-1 {
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+      top: -200px;
+      right: -150px;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-blue) 100%);
+      bottom: -200px;
+      left: -150px;
+      animation-delay: -8s;
+    }
+
+    @keyframes blobFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(70px, -50px) scale(1.08); }
+      100% { transform: translate(100px, 30px) scale(1.12); }
+    }
+
+    /* Particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--neon-blue);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: particleFloat 12s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.3; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+    }
   </style>
 </head>
 <body>
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <div class="particles" id="particles"></div>
+
   <div class="splash-screen" id="splashScreen">
     <img src="assets/icons/custom-logo.png" alt="DSIMS Logo" class="splash-logo">
     <div class="loader">
@@ -60,11 +158,36 @@
 
   <!-- Firebase SDK (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics-compat.js"></script>
   <script src="js/firebase-config.js"></script>
   <script src="js/firebase-storage.js"></script>
   <script>
+    // Create floating particles
+    (function createParticles() {
+      const container = document.getElementById('particles');
+      if (!container) return;
+      
+      const particleCount = 20;
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 12 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        particle.style.width = (Math.random() * 4 + 2) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.opacity = Math.random() * 0.4 + 0.1;
+        
+        // Random color between blue and purple
+        const colors = ['#38bdf8', '#8b5cf6', '#a78bfa'];
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        
+        container.appendChild(particle);
+      }
+    })();
+
     document.addEventListener('DOMContentLoaded', function() {
       setTimeout(async () => {
         try {
@@ -83,4 +206,3 @@
   </script>
 </body>
 </html>
-

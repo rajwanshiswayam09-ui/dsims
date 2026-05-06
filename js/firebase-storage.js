@@ -1,21 +1,13 @@
 /**
- * Firebase-backed Storage API for DSIMS.
- * This implementation replaces the localStorage-based StorageAPI with Firestore,
- * while maintaining the same async method signatures.
+ * Firebase-backed Storage API for DSIMS with User-Based Data Isolation.
  */
 
 (function () {
   const db = firebase.firestore();
+  const auth = firebase.auth();
 
-  // Collections mapping
-  const COLLECTIONS = {
-    users: 'users',
-    shop: 'shop',
-    products: 'products',
-    invoices: 'invoices',
-    analytics: 'analytics',
-    activity: 'activity'
-  };
+  // Admin email - hardcoded as requested
+  const ADMIN_EMAIL = 'rajwanshiswayam@gmail.com'; // Replace with your actual admin email
 
   const KEYS = {
     currentUser: 'currentUser'
@@ -24,93 +16,125 @@
   const generateId = () => `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
   const now = () => Date.now();
 
+  // Helper to get current user UID or null
+  const getCurrentUid = async () => {
+    const user = auth.currentUser;
+    if (user) return user.uid;
+    
+    // Fallback to localStorage if auth not ready
+    const stored = localStorage.getItem(KEYS.currentUser);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return parsed.uid || null;
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  // Check if current user is admin
+  const isAdminUser = async () => {
+    const user = auth.currentUser;
+    if (user && user.email) {
+      return user.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+    }
+    
+    // Fallback to localStorage
+    const stored = localStorage.getItem(KEYS.currentUser);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return parsed.email && parsed.email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
+      } catch (e) {
+        return false;
+      }
+    }
+    return false;
+  };
+
+  // Get Firestore path prefix for current user
+  const getUserPath = async (collection) => {
+    const isAdmin = await isAdminUser();
+    if (isAdmin) {
+      // Admin uses root collections (legacy data)
+      return collection;
+    }
+    
+    const uid = await getCurrentUid();
+    if (!uid) throw new Error('No user logged in');
+    
+    // Regular users use subcollections under /users/{uid}
+    return `users/${uid}/${collection}`;
+  };
+
   const StorageAPI = {
     // -----------------------------
     // User & Session Management
     // -----------------------------
 
-    async getUsers() {
-      const snapshot = await db.collection(COLLECTIONS.users).get();
-      return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-    },
-
-    async findUser(email) {
-      const normalized = (email || '').trim().toLowerCase();
-      const doc = await db.collection(COLLECTIONS.users).doc(normalized).get();
-      return doc.exists ? { ...doc.data(), id: doc.id } : null;
-    },
-
-    async updateUserProfile(email, data) {
-      const normalized = (email || '').trim().toLowerCase();
-      await db.collection(COLLECTIONS.users).doc(normalized).update({
-        ...data,
-        updatedAt: new Date().toISOString()
-      });
-      
-      const updated = await this.findUser(normalized);
-      
-      // If updating current user, update session too
-      const current = await this.getCurrentUser();
-      if (current && (current.email || '').toLowerCase() === normalized) {
-        await this.setCurrentUser({ ...current, ...data });
-      }
-      return updated;
-    },
-
-    async addUser(user) {
-      const normalized = (user.email || '').trim().toLowerCase();
-      const exists = await this.findUser(normalized);
-      if (exists) {
-        throw new Error('User with this email already exists');
-      }
-
-      const record = {
-        name: user.name,
-        email: normalized,
-        passwordHash: user.passwordHash,
-        createdAt: user.createdAt || new Date().toISOString()
-      };
-
-      await db.collection(COLLECTIONS.users).doc(normalized).set(record);
-      return { id: normalized, ...record };
-    },
-
-    async setCurrentUser(userOrEmail) {
-      if (!userOrEmail) {
-        localStorage.removeItem(KEYS.currentUser);
-        return null;
-      }
-
-      let current;
-      if (typeof userOrEmail === 'string') {
-        const fullUser = await this.findUser(userOrEmail);
-        current = fullUser ? { ...fullUser } : { email: userOrEmail.trim().toLowerCase() };
-      } else {
-        current = { ...userOrEmail };
-      }
-
-      current.lastActive = now();
-      localStorage.setItem(KEYS.currentUser, JSON.stringify(current));
-      return current;
-    },
-
     async getCurrentUser() {
+      let user = auth.currentUser;
+      if (user) {
+        const userObj = {
+          uid: user.uid,
+          email: user.email,
+          name: user.displayName || user.email,
+          lastActive: now()
+        };
+        localStorage.setItem(KEYS.currentUser, JSON.stringify(userObj));
+        return userObj;
+      }
+      
+      // Fallback to localStorage
       const raw = localStorage.getItem(KEYS.currentUser);
       if (!raw) return null;
       try {
-        const stored = JSON.parse(raw);
-        if (typeof stored === 'string') {
-          return { email: stored.trim().toLowerCase(), name: null, lastActive: now() };
-        }
-        return stored;
+        return JSON.parse(raw);
       } catch (e) {
         return null;
       }
     },
 
+    async setCurrentUser(user) {
+      if (!user) {
+        localStorage.removeItem(KEYS.currentUser);
+        return null;
+      }
+      
+      const current = {
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName || user.name || user.email,
+        lastActive: now()
+      };
+      
+      localStorage.setItem(KEYS.currentUser, JSON.stringify(current));
+      return current;
+    },
+
     async clearCurrentUser() {
       localStorage.removeItem(KEYS.currentUser);
       return true;
+    },
+
+    async updateUserProfile(email, data) {
+      const user = auth.currentUser;
+      if (user) {
+        if (data.name) {
+          await user.updateProfile({ displayName: data.name });
+        }
+      }
+      
+      // Update localStorage
+      const current = await this.getCurrentUser();
+      if (current) {
+        const updated = { ...current, ...data };
+        localStorage.setItem(KEYS.currentUser, JSON.stringify(updated));
+        return updated;
+      }
+      return null;
     },
 
     async touchCurrentUser() {
@@ -127,12 +151,14 @@
     // -----------------------------
 
     async getShopDetails() {
-      const doc = await db.collection(COLLECTIONS.shop).doc('details').get();
+      const path = await getUserPath('shop');
+      const doc = await db.doc(`${path}/details`).get();
       return doc.exists ? doc.data() : null;
     },
 
     async saveShopDetails(details) {
-      await db.collection(COLLECTIONS.shop).doc('details').set({
+      const path = await getUserPath('shop');
+      await db.doc(`${path}/details`).set({
         ...details,
         updatedAt: new Date().toISOString()
       }, { merge: true });
@@ -145,26 +171,29 @@
     // -----------------------------
 
     async getProducts() {
-      const snapshot = await db.collection(COLLECTIONS.products).orderBy('createdAt', 'desc').get();
+      const path = await getUserPath('products');
+      const snapshot = await db.collection(path).orderBy('createdAt', 'desc').get();
       return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
     },
 
     async addProduct(product) {
       const id = generateId();
-      // Remove any incoming ID from the product object to avoid confusion
       const { id: incomingId, ...rest } = product;
       const newProduct = { 
         ...rest, 
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       };
-      await db.collection(COLLECTIONS.products).doc(id).set(newProduct);
+      
+      const path = await getUserPath('products');
+      await db.collection(path).doc(id).set(newProduct);
       await this.logActivity('Product added', `Added product: ${newProduct.name}`);
       return { id, ...newProduct };
     },
 
     async updateProduct(id, data) {
-      const prodRef = db.collection(COLLECTIONS.products).doc(id);
+      const path = await getUserPath('products');
+      const prodRef = db.collection(path).doc(id);
       const doc = await prodRef.get();
       if (!doc.exists) {
         throw new Error('Product not found in database');
@@ -182,9 +211,10 @@
     },
 
     async deleteProduct(id) {
-      const doc = await db.collection(COLLECTIONS.products).doc(id).get();
+      const path = await getUserPath('products');
+      const doc = await db.collection(path).doc(id).get();
       const product = doc.exists ? doc.data() : null;
-      await db.collection(COLLECTIONS.products).doc(id).delete();
+      await db.collection(path).doc(id).delete();
       if (product) {
         await this.logActivity('Product deleted', `Deleted product: ${product.name}`);
       }
@@ -196,7 +226,8 @@
     // -----------------------------
 
     async getInvoices() {
-      const snapshot = await db.collection(COLLECTIONS.invoices).orderBy('createdAt', 'desc').get();
+      const path = await getUserPath('invoices');
+      const snapshot = await db.collection(path).orderBy('createdAt', 'desc').get();
       return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
     },
 
@@ -206,13 +237,16 @@
         ...invoice, 
         createdAt: new Date().toISOString()
       };
-      await db.collection(COLLECTIONS.invoices).doc(id).set(newInvoice);
+      
+      const path = await getUserPath('invoices');
+      await db.collection(path).doc(id).set(newInvoice);
       
       // Update product quantities in Firestore
       if (newInvoice.items && Array.isArray(newInvoice.items)) {
+        const productsPath = await getUserPath('products');
         for (const item of newInvoice.items) {
           if (item.productId) {
-            const prodRef = db.collection(COLLECTIONS.products).doc(item.productId);
+            const prodRef = db.collection(productsPath).doc(item.productId);
             const prodDoc = await prodRef.get();
             if (prodDoc.exists) {
               const currentQty = Number(prodDoc.data().quantity) || 0;
@@ -228,9 +262,10 @@
     },
 
     async deleteInvoice(id) {
-      const doc = await db.collection(COLLECTIONS.invoices).doc(id).get();
+      const path = await getUserPath('invoices');
+      const doc = await db.collection(path).doc(id).get();
       const invoice = doc.exists ? doc.data() : null;
-      await db.collection(COLLECTIONS.invoices).doc(id).delete();
+      await db.collection(path).doc(id).delete();
       if (invoice) {
         await this.logActivity('Invoice deleted', `Deleted invoice #${invoice.invoiceNumber}`);
       }
@@ -242,14 +277,17 @@
     // -----------------------------
 
     async getAnalytics() {
-      const snapshot = await db.collection(COLLECTIONS.analytics).orderBy('createdAt', 'desc').get();
+      const path = await getUserPath('analytics');
+      const snapshot = await db.collection(path).orderBy('createdAt', 'desc').get();
       return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
     },
 
     async addAnalyticsEntry(entry) {
       const id = generateId();
       const record = { ...entry, createdAt: entry.createdAt || new Date().toISOString() };
-      await db.collection(COLLECTIONS.analytics).doc(id).set(record);
+      
+      const path = await getUserPath('analytics');
+      await db.collection(path).doc(id).set(record);
       return { id, ...record };
     },
 
@@ -258,7 +296,8 @@
     // -----------------------------
 
     async getActivities() {
-      const snapshot = await db.collection(COLLECTIONS.activity).orderBy('timestamp', 'desc').limit(50).get();
+      const path = await getUserPath('activity');
+      const snapshot = await db.collection(path).orderBy('timestamp', 'desc').limit(50).get();
       return snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
     },
 
@@ -269,7 +308,9 @@
         message,
         timestamp: new Date().toISOString()
       };
-      await db.collection(COLLECTIONS.activity).doc(id).set(activity);
+      
+      const path = await getUserPath('activity');
+      await db.collection(path).doc(id).set(activity);
       return activity;
     },
 
@@ -278,32 +319,26 @@
     // -----------------------------
 
     async generateInvoiceNumber() {
-      const snapshot = await db.collection(COLLECTIONS.invoices).get();
+      const path = await getUserPath('invoices');
+      const snapshot = await db.collection(path).get();
       const base = snapshot.size + 1;
       return `INV-${base.toString().padStart(4, '0')}`;
     },
 
     // -----------------------------
-    // Utility
+    // First Time Setup Check
     // -----------------------------
 
-    async clearAllDataExceptUsers() {
-      const collectionsToClear = [COLLECTIONS.shop, COLLECTIONS.products, COLLECTIONS.invoices, COLLECTIONS.analytics, COLLECTIONS.activity];
-      
-      for (const colName of collectionsToClear) {
-        const snapshot = await db.collection(colName).get();
-        const batch = db.batch();
-        snapshot.docs.forEach(doc => batch.delete(doc.ref));
-        await batch.commit();
-      }
-      return true;
+    async hasCompletedSetup() {
+      const shopDetails = await this.getShopDetails();
+      return !!shopDetails;
     }
   };
 
   // Make it globally available
   window.StorageAPI = StorageAPI;
 
-  // Lightweight global activity tracking: keeps the current session "fresh"
+  // Lightweight global activity tracking
   const activityEvents = ['click', 'keydown', 'mousemove', 'touchstart'];
   activityEvents.forEach((evt) => {
     window.addEventListener(

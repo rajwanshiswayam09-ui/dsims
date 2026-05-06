@@ -4,27 +4,12 @@
     light: 'light'
   };
 
-  const STORAGE_KEY = 'theme-preference';
-
-  function getTheme() {
-    return localStorage.getItem(STORAGE_KEY) || THEMES.dark;
-  }
-
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem(STORAGE_KEY, theme);
   }
 
   function initTheme() {
-    const saved = getTheme();
-    applyTheme(saved);
-  }
-
-  // Toggle theme
-  function toggleTheme() {
-    const current = getTheme();
-    const newTheme = current === THEMES.dark ? THEMES.light : THEMES.dark;
-    applyTheme(newTheme);
+    applyTheme(THEMES.dark);
   }
 
   function initBottomNav() {
@@ -100,37 +85,18 @@
         initTheme();
         initSidebar();
         initBottomNav();
-        initThemeToggle();
       });
     } else {
       initTheme();
       initSidebar();
       initBottomNav();
-      initThemeToggle();
     }
 
   // Export for global use
   window.ThemeAPI = {
-    toggle: toggleTheme,
     set: applyTheme,
-    get: getTheme
+    get: () => THEMES.dark
   };
-
-  function initThemeToggle() {
-    const btn = document.getElementById('themeToggle');
-    if (!btn) return;
-    
-    const updateIcon = () => {
-      const isDark = getTheme() === THEMES.dark;
-      btn.innerHTML = isDark ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-    };
-
-    btn.addEventListener('click', () => {
-      toggleTheme();
-      updateIcon();
-    });
-    updateIcon();
-  }
 
   // Helper to update topbar profile info
   window.updateTopbarProfile = (user) => {

@@ -7,26 +7,257 @@
   <link rel="stylesheet" href="css/app-shell.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <style>
-    body { display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at top right, rgba(56, 189, 248, 0.1), transparent), radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.05), transparent), var(--bg-main); }
-    .auth-card { width: 100%; max-width: 420px; padding: 2.5rem; background: var(--bg-card); border-radius: var(--radius-xl); border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
-    @media (max-width: 480px) { .auth-card { padding: 1.5rem; border-radius: var(--radius-lg); } }
-    .auth-header { text-align: center; margin-bottom: 2rem; }
-    .auth-logo { width: 64px; height: 64px; margin-bottom: 1rem; }
-    .auth-tabs { display: flex; background: var(--bg-input); padding: 0.25rem; border-radius: var(--radius-md); margin-bottom: 2rem; }
-    .auth-tab { flex: 1; padding: 0.5rem; border: none; background: transparent; color: var(--text-muted); font-weight: 600; cursor: pointer; border-radius: var(--radius-sm); transition: var(--transition); }
-    .auth-tab.active { background: var(--bg-card); color: var(--accent); box-shadow: var(--shadow-sm); }
-    .auth-message { margin-top: 1rem; text-align: center; font-size: 0.875rem; min-height: 1.25rem; }
-    .auth-message.error { color: var(--danger); }
-    .auth-message.success { color: var(--success); }
+    :root {
+      --hero-gradient: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 50%, #fff 100%);
+      --glass-bg: rgba(30, 41, 59, 0.5);
+      --glass-border: rgba(148, 163, 184, 0.15);
+      --glass-hover: rgba(30, 41, 59, 0.7);
+      --neon-blue: #38bdf8;
+      --neon-purple: #8b5cf6;
+    }
+
+    body { 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      background: radial-gradient(circle at 20% 20%, rgba(56, 189, 248, 0.08), transparent 40%),
+                  radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.08), transparent 40%),
+                  radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 1), transparent 70%),
+                  var(--bg-main);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .auth-card { 
+      width: 100%; 
+      max-width: 440px; 
+      padding: 3rem 2.5rem; 
+      background: var(--glass-bg); 
+      border-radius: 20px; 
+      border: 1px solid var(--glass-border); 
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 40px rgba(56, 189, 248, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      position: relative;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--neon-blue), var(--neon-purple), transparent);
+    }
+
+    @media (max-width: 480px) { 
+      .auth-card { 
+        padding: 2rem 1.5rem; 
+        border-radius: 16px; 
+        margin: 1rem;
+      } 
+    }
+
+    .auth-header { 
+      text-align: center; 
+      margin-bottom: 2rem; 
+    }
+
+    .auth-logo { 
+      width: 72px; 
+      height: 72px; 
+      margin-bottom: 1.25rem;
+      filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.4));
+      animation: logoPulse 4s infinite ease-in-out;
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 25px rgba(56, 189, 248, 0.4)); }
+      50% { transform: scale(1.08); filter: drop-shadow(0 0 40px rgba(56, 189, 248, 0.6)); }
+    }
+
+    .auth-header h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      background: var(--hero-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+    }
+
+    .auth-header p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .auth-tabs { 
+      display: flex; 
+      background: rgba(30, 41, 59, 0.6); 
+      padding: 0.35rem; 
+      border-radius: 12px; 
+      margin-bottom: 2rem;
+      border: 1px solid var(--glass-border);
+    }
+
+    .auth-tab { 
+      flex: 1; 
+      padding: 0.75rem; 
+      border: none; 
+      background: transparent; 
+      color: var(--text-muted); 
+      font-weight: 700; 
+      cursor: pointer; 
+      border-radius: 8px; 
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .auth-tab:hover {
+      color: var(--text-main);
+    }
+
+    .auth-tab.active { 
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+      color: var(--text-inverse); 
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    }
+
+    .auth-message { 
+      margin-top: 1.25rem; 
+      text-align: center; 
+      font-size: 0.875rem; 
+      min-height: 1.25rem;
+      font-weight: 600;
+    }
+
+    .auth-message.error { 
+      color: var(--danger); 
+    }
+
+    .auth-message.success { 
+      color: var(--success); 
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+      color: var(--text-inverse);
+      border: none;
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.3), 0 4px 15px rgba(139, 92, 246, 0.2);
+      padding: 1rem 2rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 50px rgba(56, 189, 248, 0.4), 0 8px 30px rgba(139, 92, 246, 0.3);
+    }
+
+    /* Background Blobs */
+    .bg-blobs {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .blob {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.08;
+      animation: blobFloat 25s infinite alternate ease-in-out;
+    }
+
+    .blob-1 {
+      background: linear-gradient(135deg, var(--neon-blue) 0%, var(--neon-purple) 100%);
+      top: -200px;
+      right: -150px;
+      animation-delay: 0s;
+    }
+
+    .blob-2 {
+      background: linear-gradient(135deg, var(--neon-purple) 0%, var(--neon-blue) 100%);
+      bottom: -200px;
+      left: -150px;
+      animation-delay: -8s;
+    }
+
+    @keyframes blobFloat {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(70px, -50px) scale(1.08); }
+      100% { transform: translate(100px, 30px) scale(1.12); }
+    }
+
+    /* Particles */
+    .particles {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--neon-blue);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: particleFloat 12s infinite linear;
+    }
+
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 0.3; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+    }
   </style>
   <script src="js/theme.js"></script>
 </head>
 <body class="animate-fade">
+  <div class="bg-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+
+  <div class="particles" id="particles"></div>
+
   <div class="auth-card animate-slide-up">
     <div class="auth-header">
       <img src="assets/icons/custom-logo.png" alt="DSIMS Logo" class="auth-logo">
-      <h2 style="margin: 0;">Welcome to DSIMS</h2>
-      <p style="margin: 0; font-size: 0.875rem;">Inventory Management Simplified</p>
+      <h2>Welcome to DSIMS</h2>
+      <p>Inventory Management Simplified</p>
     </div>
 
     <div class="auth-tabs">
@@ -71,24 +302,6 @@
         <span>Continue</span> <i class="fas fa-arrow-right"></i>
       </button>
 
-      <!-- Divider -->
-      <div style="display: flex; align-items: center; gap: 1rem; margin: 1.5rem 0;">
-        <div style="flex: 1; height: 1px; background: var(--border);"></div>
-        <span style="color: var(--text-muted); font-size: 0.875rem;">or continue with</span>
-        <div style="flex: 1; height: 1px; background: var(--border);"></div>
-      </div>
-
-      <!-- Google Sign-In Button -->
-      <button id="googleSignInBtn" type="button" class="btn" style="width: 100%; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
-        <svg width="20" height="20" viewBox="0 0 48 48" fill="none">
-          <path fill="#4285F4" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-          <path fill="#34A853" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-          <path fill="#EA4335" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-        </svg>
-        <span>Continue with Google</span>
-      </button>
-
       <p id="authMessage" class="auth-message"></p>
     </form>
   </div>
@@ -102,9 +315,32 @@
   <script src="js/firebase-storage.js"></script>
   <script src="js/auth.js"></script>
   <script>
+    // Create floating particles
+    (function createParticles() {
+      const container = document.getElementById('particles');
+      if (!container) return;
+      
+      const particleCount = 25;
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 12 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        particle.style.width = (Math.random() * 4 + 2) + 'px';
+        particle.style.height = particle.style.width;
+        particle.style.opacity = Math.random() * 0.4 + 0.1;
+        
+        // Random color between blue and purple
+        const colors = ['#38bdf8', '#8b5cf6', '#a78bfa'];
+        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+        
+        container.appendChild(particle);
+      }
+    })();
+
     // Theme initialization
     if (window.ThemeAPI) ThemeAPI.set('dark');
   </script>
 </body>
 </html>
-
